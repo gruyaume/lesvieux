@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type CreateJobPostResponse struct {
@@ -30,11 +29,6 @@ type GetJobPostResponse struct {
 	Status    string `json:"status"`
 	CreatedAt string `json:"created_at"`
 	Author    string `json:"author"`
-}
-
-func generateDate() string {
-	now := time.Now()
-	return now.Format(time.RFC3339)
 }
 
 func ListJobPosts(env *HandlerConfig) http.HandlerFunc {
