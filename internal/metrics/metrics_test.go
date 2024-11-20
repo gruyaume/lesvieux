@@ -50,31 +50,31 @@ func TestMetrics(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	createBlogPost1Params := db.CreateBlogPostParams{
+	createJobPost1Params := db.CreateJobPostParams{
 		Title:     "my title 1",
 		Content:   "my content 1",
 		CreatedAt: "creation time 1",
 	}
-	createBlogPost2Params := db.CreateBlogPostParams{
+	createJobPost2Params := db.CreateJobPostParams{
 		Title:     "my title 2",
 		Content:   "my content 2",
 		CreatedAt: "creation time 2",
 	}
-	_, err = dbQueries.CreateBlogPost(context.Background(), createBlogPost1Params)
+	_, err = dbQueries.CreateJobPost(context.Background(), createJobPost1Params)
 	if err != nil {
-		t.Fatalf("couldn't create test blog post: %s", err)
+		t.Fatalf("couldn't create test job post: %s", err)
 	}
-	_, err = dbQueries.CreateBlogPost(context.Background(), createBlogPost2Params)
+	_, err = dbQueries.CreateJobPost(context.Background(), createJobPost2Params)
 	if err != nil {
-		t.Fatalf("couldn't create test blog post: %s", err)
+		t.Fatalf("couldn't create test job post: %s", err)
 	}
 
 	m := metrics.NewMetricsSubsystem(dbQueries)
-	blogPosts, err := dbQueries.ListBlogPosts(context.Background())
+	jobPosts, err := dbQueries.ListJobPosts(context.Background())
 	if err != nil {
-		t.Fatalf("couldn't list blog posts: %s", err)
+		t.Fatalf("couldn't list job posts: %s", err)
 	}
-	m.GenerateMetrics(blogPosts)
+	m.GenerateMetrics(jobPosts)
 
 	request, _ := http.NewRequest("GET", "/", nil)
 	recorder := httptest.NewRecorder()
@@ -87,9 +87,9 @@ func TestMetrics(t *testing.T) {
 		t.Errorf("handler returned an empty body")
 	}
 	for _, line := range strings.Split(recorder.Body.String(), "\n") {
-		if strings.Contains(line, "blog_posts_total ") && !strings.HasPrefix(line, "#") {
+		if strings.Contains(line, "job_posts_total ") && !strings.HasPrefix(line, "#") {
 			if !strings.HasSuffix(line, "2") {
-				t.Errorf("blog_posts_total expected to receive 2")
+				t.Errorf("job_posts_total expected to receive 2")
 			}
 		}
 	}

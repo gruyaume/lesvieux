@@ -1,7 +1,7 @@
-import { BlogPost, UserEntry } from "./types"
+import { JobPost, UserEntry } from "./types"
 import { HTTPStatus } from "./portal/utils"
 
-export type RequiredBlogPostParams = {
+export type RequiredJobPostParams = {
     id: string
     authToken: string
 }
@@ -16,8 +16,8 @@ export async function getStatus() {
 }
 
 
-export async function ListPublicBlogPosts(): Promise<BlogPost[]> {
-    // Step 1: Fetch the list of blog post IDs
+export async function ListPublicJobPosts(): Promise<JobPost[]> {
+    // Step 1: Fetch the list of job post IDs
     const response = await fetch("/api/v1/published_posts", {
         method: 'GET',
     });
@@ -32,7 +32,7 @@ export async function ListPublicBlogPosts(): Promise<BlogPost[]> {
     const respData = await response.json();
     const ids: number[] = respData.result;
 
-    // Step 2: Fetch details for each blog post
+    // Step 2: Fetch details for each job post
     const promises = ids.map(async (id: number) => {
         const postResponse = await fetch(`/api/v1/published_posts/${id}`, {
             method: 'GET',
@@ -61,8 +61,8 @@ export async function ListPublicBlogPosts(): Promise<BlogPost[]> {
 
 
 
-export async function listBlogPosts(params: { authToken: string }): Promise<BlogPost[]> {
-    // Step 1: Fetch the list of blog post IDs
+export async function listJobPosts(params: { authToken: string }): Promise<JobPost[]> {
+    // Step 1: Fetch the list of job post IDs
     const response = await fetch("/api/v1/posts", {
         method: 'GET',
         headers: {
@@ -80,7 +80,7 @@ export async function listBlogPosts(params: { authToken: string }): Promise<Blog
     const respData = await response.json();
     const ids: number[] = respData.result;
 
-    // Step 2: Fetch details for each blog post
+    // Step 2: Fetch details for each job post
     const promises = ids.map(async (id: number) => {
         const postResponse = await fetch(`/api/v1/posts/${id}`, {
             method: 'GET',
@@ -112,8 +112,8 @@ export async function listBlogPosts(params: { authToken: string }): Promise<Blog
 
 
 
-export async function listMyBlogPosts(params: { authToken: string }): Promise<BlogPost[]> {
-    // Step 1: Fetch the list of blog post IDs
+export async function listMyJobPosts(params: { authToken: string }): Promise<JobPost[]> {
+    // Step 1: Fetch the list of job post IDs
     const response = await fetch("/api/v1/me/posts", {
         method: 'GET',
         headers: {
@@ -131,7 +131,7 @@ export async function listMyBlogPosts(params: { authToken: string }): Promise<Bl
     const respData = await response.json();
     const ids: number[] = respData.result;
 
-    // Step 2: Fetch details for each blog post
+    // Step 2: Fetch details for each job post
     const promises = ids.map(async (id: number) => {
         const postResponse = await fetch(`/api/v1/me/posts/${id}`, {
             method: 'GET',
@@ -161,7 +161,7 @@ export async function listMyBlogPosts(params: { authToken: string }): Promise<Bl
     return Promise.all(promises);
 }
 
-export async function getBlogPost(params: RequiredBlogPostParams): Promise<BlogPost> {
+export async function getJobPost(params: RequiredJobPostParams): Promise<JobPost> {
     const postResponse = await fetch(`/api/v1/posts/${params.id}`, {
         method: 'GET',
         headers: {
@@ -188,7 +188,7 @@ export async function getBlogPost(params: RequiredBlogPostParams): Promise<BlogP
 }
 
 
-export async function createBlogPost(params: { authToken: string }) {
+export async function createJobPost(params: { authToken: string }) {
     const response = await fetch("/api/v1/me/posts", {
         method: 'POST',
         headers: {
@@ -204,7 +204,7 @@ export async function createBlogPost(params: { authToken: string }) {
     return respData.result
 }
 
-export async function updateMyBlogPost(params: RequiredBlogPostParams & { title: string, content: string, status: string }) {
+export async function updateMyJobPost(params: RequiredJobPostParams & { title: string, content: string, status: string }) {
     if (!params.title) {
         throw new Error('title not provided')
     }
@@ -226,7 +226,7 @@ export async function updateMyBlogPost(params: RequiredBlogPostParams & { title:
     return respData.result
 }
 
-export async function deleteBlogPost(params: RequiredBlogPostParams) {
+export async function deleteJobPost(params: RequiredJobPostParams) {
     const response = await fetch("/api/v1/posts/" + params.id, {
         method: 'DELETE',
         headers: {
@@ -239,7 +239,7 @@ export async function deleteBlogPost(params: RequiredBlogPostParams) {
     return
 }
 
-export async function deleteMyBlogPost(params: RequiredBlogPostParams) {
+export async function deleteMyJobPost(params: RequiredJobPostParams) {
     const response = await fetch("/api/v1/me/posts/" + params.id, {
         method: 'DELETE',
         headers: {

@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { BlogPost } from "../../../types";
+import { JobPost } from "../../../types";
 import { Panel, EmptyState, MainTable, ContextualMenu, ConfirmationModal } from "@canonical/react-components";
-import { RequiredBlogPostParams, deleteBlogPost } from "../../../queries"
+import { RequiredJobPostParams, deleteJobPost } from "../../../queries"
 import { UseMutationResult, useMutation, useQueryClient } from "react-query"
 import { useCookies } from "react-cookie"
 import { formatDate } from "../../../utils";
 
 
-function BlogEmptyState({ }: {}) {
+function JobEmptyState({ }: {}) {
     return (
         <EmptyState
             image={""}
-            title="No Blog Posts Available yet."
+            title="No Job Posts Available yet."
         >
             <p>
-                There are no blog posts in LesVieux.
+                There are no job posts in LesVieux.
             </p>
         </EmptyState>
     );
@@ -26,33 +26,33 @@ export type ConfirmationModalData = {
 } | null
 
 type TableProps = {
-    blogPosts: BlogPost[];
+    jobPosts: JobPost[];
 };
 
-export function BlogPostsTable({ blogPosts: rows }: TableProps) {
+export function JobPostsTable({ jobPosts: rows }: TableProps) {
     const [cookies, setCookie, removeCookie] = useCookies(['user_token']);
     const [confirmationModalData, setConfirmationModalData] = useState<ConfirmationModalData | null>(null);
 
-    const mutationFunc = (mutation: UseMutationResult<any, unknown, RequiredBlogPostParams, unknown>, params: RequiredBlogPostParams) => {
+    const mutationFunc = (mutation: UseMutationResult<any, unknown, RequiredJobPostParams, unknown>, params: RequiredJobPostParams) => {
         mutation.mutate(params)
     }
     const queryClient = useQueryClient()
-    const deleteMutation = useMutation(deleteBlogPost, {
+    const deleteMutation = useMutation(deleteJobPost, {
         onSuccess: () => {
-            queryClient.invalidateQueries('blogposts')
+            queryClient.invalidateQueries('jobposts')
         }
     })
 
     const handleDelete = (id: number) => {
         setConfirmationModalData({
             onMouseDownFunc: () => mutationFunc(deleteMutation, { id: id.toString(), authToken: cookies.user_token }),
-            warningText: "Deleting a blog post means it will be completely removed forever. This action cannot be undone.",
+            warningText: "Deleting a job post means it will be completely removed forever. This action cannot be undone.",
         });
     };
 
 
-    const blogPostsRows = rows.map((blogPost) => {
-        const { id, title, author, status, created_at } = blogPost;
+    const jobPostsRows = rows.map((jobPost) => {
+        const { id, title, author, status, created_at } = jobPost;
         return {
             sortData: {
                 id,
@@ -96,7 +96,7 @@ export function BlogPostsTable({ blogPosts: rows }: TableProps) {
         >
             <div className="u-fixed-width">
                 <MainTable
-                    emptyStateMsg={<BlogEmptyState />}
+                    emptyStateMsg={<JobEmptyState />}
                     expanding
                     sortable
                     headers={[
@@ -125,7 +125,7 @@ export function BlogPostsTable({ blogPosts: rows }: TableProps) {
                             className: "u-align--right has-overflow"
                         }
                     ]}
-                    rows={blogPostsRows}
+                    rows={jobPostsRows}
                 />
                 {confirmationModalData != null && (
                     <ConfirmationModal

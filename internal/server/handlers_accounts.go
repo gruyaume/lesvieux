@@ -99,7 +99,7 @@ func GetMyAccount(env *HandlerConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		claims, err := getClaimsFromAuthorizationHeader(r.Header.Get("Authorization"), env.JWTSecret)
 		if err != nil {
-			writeError(w, http.StatusUnauthorized, err.Error())
+			writeError(w, http.StatusUnauthorized, "Invalid token")
 			return
 		}
 		DBAccount, err := env.DBQueries.GetAccountByUsername(context.Background(), claims.Username)
@@ -108,7 +108,7 @@ func GetMyAccount(env *HandlerConfig) http.HandlerFunc {
 				writeError(w, http.StatusNotFound, "Account not found")
 				return
 			}
-			writeError(w, http.StatusUnauthorized, err.Error())
+			writeError(w, http.StatusUnauthorized, "Invalid token")
 			return
 		}
 		accountResponse := GetAccountResponse{
@@ -299,12 +299,12 @@ func ChangeMyAccountPassword(env *HandlerConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		claims, err := getClaimsFromAuthorizationHeader(r.Header.Get("Authorization"), env.JWTSecret)
 		if err != nil {
-			writeError(w, http.StatusUnauthorized, err.Error())
+			writeError(w, http.StatusUnauthorized, "Invalid token")
 			return
 		}
 		account, err := env.DBQueries.GetAccountByUsername(context.Background(), claims.Username)
 		if err != nil {
-			writeError(w, http.StatusUnauthorized, err.Error())
+			writeError(w, http.StatusUnauthorized, "Invalid token")
 			return
 		}
 		id := strconv.FormatInt(account.ID, 10)

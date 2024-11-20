@@ -1,4 +1,4 @@
-db_path: "./blog.db"
+db_path: "./lesvieux.db"
 tls:
   cert: "testdata/cert.pem"
   key: "testdata/key.pem"

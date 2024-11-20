@@ -1,9 +1,9 @@
 "use client"
 
 import { useQuery } from "react-query"
-import { BlogPostsTable } from "./table"
-import { listMyBlogPosts } from "../../queries"
-import { BlogPost } from "../../types"
+import { JobPostsTable } from "./table"
+import { listMyJobPosts } from "../../queries"
+import { JobPost } from "../../types"
 import { useCookies } from "react-cookie"
 import { useRouter } from "next/navigation"
 import Loading from "../../components/loading"
@@ -16,16 +16,16 @@ export default function MyPosts() {
     if (!cookies.user_token) {
         router.push("/portal/login")
     }
-    const query = useQuery<BlogPost[], Error>({
-        queryKey: ['blogposts', cookies.user_token],
-        queryFn: () => listMyBlogPosts({ authToken: cookies.user_token }),
+    const query = useQuery<JobPost[], Error>({
+        queryKey: ['jobposts', cookies.user_token],
+        queryFn: () => listMyJobPosts({ authToken: cookies.user_token }),
     })
     if (query.status == "loading") { return <Loading /> }
     if (query.status == "error") {
         return <Error msg={query.error.message} />
     }
-    const blogPosts = Array.from(query.data ? query.data : [])
+    const jobPosts = Array.from(query.data ? query.data : [])
     return (
-        <BlogPostsTable blogPosts={blogPosts} />
+        <JobPostsTable jobPosts={jobPosts} />
     )
 }

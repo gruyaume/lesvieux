@@ -14,8 +14,8 @@ import (
 
 type PrometheusMetrics struct {
 	http.Handler
-	registry  *prometheus.Registry
-	BlogPosts prometheus.Gauge
+	registry *prometheus.Registry
+	JobPosts prometheus.Gauge
 
 	RequestsTotal    prometheus.CounterVec
 	RequestsDuration prometheus.HistogramVec
@@ -28,12 +28,12 @@ func NewMetricsSubsystem(db *db.Queries) *PrometheusMetrics {
 	ticker := time.NewTicker(120 * time.Second)
 	go func() {
 		for ; ; <-ticker.C {
-			blogPosts, err := db.ListBlogPosts(context.Background())
+			jobPosts, err := db.ListJobPosts(context.Background())
 			if err != nil {
-				log.Println("error listing blog posts:", err)
+				log.Println("error listing job posts:", err)
 				continue
 			}
-			metricsBackend.GenerateMetrics(blogPosts)
+			metricsBackend.GenerateMetrics(jobPosts)
 		}
 	}()
 	return metricsBackend
@@ -44,13 +44,13 @@ func NewMetricsSubsystem(db *db.Queries) *PrometheusMetrics {
 // The registry and metrics can be modified from this struct from anywhere in the codebase.
 func newPrometheusMetrics() *PrometheusMetrics {
 	m := &PrometheusMetrics{
-		registry:  prometheus.NewRegistry(),
-		BlogPosts: blogPostsMetric(),
+		registry: prometheus.NewRegistry(),
+		JobPosts: jobPostsMetric(),
 
 		RequestsTotal:    requestsTotalMetric(),
 		RequestsDuration: requestDurationMetric(),
 	}
-	m.registry.MustRegister(m.BlogPosts)
+	m.registry.MustRegister(m.JobPosts)
 
 	m.registry.MustRegister(m.RequestsTotal)
 	m.registry.MustRegister(m.RequestsDuration)
@@ -60,16 +60,16 @@ func newPrometheusMetrics() *PrometheusMetrics {
 	return m
 }
 
-// GenerateMetrics receives the live list of blog posts to calculate the most recent values for the metrics
+// GenerateMetrics receives the live list of job posts to calculate the most recent values for the metrics
 // defined for prometheus
-func (pm *PrometheusMetrics) GenerateMetrics(blogPosts []db.BlogPost) {
-	pm.BlogPosts.Set(float64(len(blogPosts)))
+func (pm *PrometheusMetrics) GenerateMetrics(jobPosts []db.JobPost) {
+	pm.JobPosts.Set(float64(len(jobPosts)))
 }
 
-func blogPostsMetric() prometheus.Gauge {
+func jobPostsMetric() prometheus.Gauge {
 	metric := prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "blog_posts_total",
-		Help: "Total number of blog posts",
+		Name: "job_posts_total",
+		Help: "Total number of job posts",
 	})
 	return metric
 }
