@@ -1,0 +1,5 @@
+db_path: "./blog.db"
+tls:
+  cert: "testdata/cert.pem"
+  key: "testdata/key.pem"
+port: 8000

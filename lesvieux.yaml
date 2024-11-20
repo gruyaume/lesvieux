@@ -1,0 +1,5 @@
+db_path: "./lesvieux.db"
+port: 8000
+tls:
+  cert: "./cert.pem"
+  key: "./key.pem"

@@ -1,0 +1,50 @@
+// Import the framework
+@import 'node_modules/vanilla-framework';
+
+// Include all of Vanilla Framework
+@include vanilla;
+
+// Include Vanilla Framework icons
+@include vf-p-icon-canvas;
+@include vf-p-icon-begin-downloading;
+@include vf-p-icon-containers;
+
+.p-panel__content {
+    overflow: visible;
+}
+
+// Add Extra logo CSS
+.logo {
+
+    .logo-text {
+        color: #000000;
+        display: inline-block;
+        font-size: 1.3rem;
+        font-weight: 300;
+        line-height: 1rem;
+        margin-top: 0.5rem;
+        padding-left: 1.5rem;
+    }
+}
+
+/* Styles for blog post content */
+.blog-post-content h1 {
+    font-size: 2rem;
+    margin-top: 1.5rem;
+}
+
+.blog-post-content h2 {
+    font-size: 1.75rem;
+    margin-top: 1.25rem;
+}
+
+.blog-post-content h3 {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Adjust other elements like paragraphs, lists, etc. if needed */
+.blog-post-content p {
+    font-size: 1rem;
+    line-height: 1.5;
+}
