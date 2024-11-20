@@ -33,7 +33,7 @@ function BlogEmptyState({ }: {}) {
             title="No Blog Posts Available yet."
         >
             <p>
-                There are no blog posts in Hebdo. Publish your first post!
+                There are no blog posts in LesVieux. Publish your first post!
             </p>
             <Button
                 appearance="positive"

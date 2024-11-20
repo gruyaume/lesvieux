@@ -28,7 +28,7 @@ func setupServer() (*httptest.Server, *server.HandlerConfig, error) {
 	config := &server.HandlerConfig{
 		DBQueries: dbQueries,
 	}
-	ts := httptest.NewTLSServer(server.NewHebdoRouter(config))
+	ts := httptest.NewTLSServer(server.NewLesVieuxRouter(config))
 	return ts, config, nil
 }
 

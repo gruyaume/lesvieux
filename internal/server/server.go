@@ -32,7 +32,7 @@ func New(port int, cert []byte, key []byte, dbQueries *db.Queries) (*http.Server
 		DBQueries: dbQueries,
 		JWTSecret: jwtSecret,
 	}
-	router := NewHebdoRouter(env)
+	router := NewLesVieuxRouter(env)
 
 	serverCerts, err := tls.X509KeyPair(cert, key)
 	if err != nil {

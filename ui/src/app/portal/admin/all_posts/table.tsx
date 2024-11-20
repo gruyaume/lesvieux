@@ -14,7 +14,7 @@ function BlogEmptyState({ }: {}) {
             title="No Blog Posts Available yet."
         >
             <p>
-                There are no blog posts in Hebdo.
+                There are no blog posts in LesVieux.
             </p>
         </EmptyState>
     );

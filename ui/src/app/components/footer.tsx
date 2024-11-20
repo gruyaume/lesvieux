@@ -8,7 +8,7 @@ export default function Footer() {
             <nav className="row" aria-label="Footer">
                 <div className="has-cookie">
                     <Logo />
-                    <p>© 2024 This blog is built with <a href="https://github.com/gruyaume/lesvieux">Hebdo</a>.</p>
+                    <p>© 2024 This blog is built with <a href="https://github.com/gruyaume/lesvieux">LesVieux</a>.</p>
                 </div>
             </nav>
         </footer>

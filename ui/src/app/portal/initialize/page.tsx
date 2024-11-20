@@ -86,7 +86,7 @@ export default function Initialize() {
                 }}>
                     <fieldset>
                         <Panel
-                            title="Initialize Hebdo">
+                            title="Initialize LesVieux">
                             <Form >
                                 <h4>Create the initial admin user</h4>
                                 <Input

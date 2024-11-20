@@ -4,7 +4,7 @@ import Footer from "./components/footer"
 import { ReactQueryClientProvider } from './components/ReactQueryClientProvider'
 
 export const metadata: Metadata = {
-  title: "Hebdo",
+  title: "LesVieux",
   description: "A blogging platform",
 };
 

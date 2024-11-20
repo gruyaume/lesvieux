@@ -89,7 +89,7 @@ func adminOrFirstUser(jwtSecret []byte, db *db.Queries, handler func(http.Respon
 	}
 }
 
-func getClaimsFromAuthorizationHeader(header string, jwtSecret []byte) (*jwtHebdoClaims, error) {
+func getClaimsFromAuthorizationHeader(header string, jwtSecret []byte) (*jwtLesVieuxClaims, error) {
 	if header == "" {
 		return nil, fmt.Errorf("authorization header not found")
 	}
@@ -104,8 +104,8 @@ func getClaimsFromAuthorizationHeader(header string, jwtSecret []byte) (*jwtHebd
 	return claims, nil
 }
 
-func getClaimsFromJWT(bearerToken string, jwtSecret []byte) (*jwtHebdoClaims, error) {
-	claims := jwtHebdoClaims{}
+func getClaimsFromJWT(bearerToken string, jwtSecret []byte) (*jwtLesVieuxClaims, error) {
+	claims := jwtLesVieuxClaims{}
 	token, err := jwt.ParseWithClaims(bearerToken, &claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])

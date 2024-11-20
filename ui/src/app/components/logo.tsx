@@ -6,7 +6,7 @@ export default function Logo() {
     return (
         <div style={{ display: "flex", alignItems: "center" }}>
             <Image
-                alt="Hebdo"
+                alt="LesVieux"
                 src="https://www.svgrepo.com/show/523579/notebook-bookmark.svg"
                 width="32"
                 height="32"
@@ -19,7 +19,7 @@ export default function Logo() {
                     color: "inherit",
                 }}
             >
-                Hebdo
+                LesVieux
             </span>
         </div>
     )

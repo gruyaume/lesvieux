@@ -6,7 +6,7 @@ import (
 	"github.com/gruyaume/lesvieux/internal/metrics"
 )
 
-func NewHebdoRouter(config *HandlerConfig) http.Handler {
+func NewLesVieuxRouter(config *HandlerConfig) http.Handler {
 	apiV1Router := http.NewServeMux()
 
 	// No Auth

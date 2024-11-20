@@ -23,7 +23,7 @@ type LoginResponse struct {
 	Token string `json:"token"`
 }
 
-type jwtHebdoClaims struct {
+type jwtLesVieuxClaims struct {
 	ID       int64  `json:"id"`
 	Username string `json:"username"`
 	Role     int64  `json:"role"`
@@ -32,7 +32,7 @@ type jwtHebdoClaims struct {
 
 // Helper function to generate a JWT
 func generateJWT(id int64, username string, jwtSecret []byte, role int64) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtHebdoClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtLesVieuxClaims{
 		ID:       id,
 		Username: username,
 		Role:     role,
