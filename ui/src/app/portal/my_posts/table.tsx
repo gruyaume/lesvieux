@@ -1,28 +1,28 @@
 import { useState } from "react";
-import { BlogPost } from "../../types";
+import { JobPost } from "../../types";
 import { Panel, Button, EmptyState, MainTable, ContextualMenu, ConfirmationModal, Icon } from "@canonical/react-components";
-import { RequiredBlogPostParams, deleteMyBlogPost, createBlogPost } from "../../queries"
+import { RequiredJobPostParams, deleteMyJobPost, createJobPost } from "../../queries"
 import { UseMutationResult, useMutation, useQueryClient } from "react-query"
 import { useCookies } from "react-cookie"
 import { useRouter } from "next/navigation";
 import { formatDate } from "../../utils";
 
 
-function BlogEmptyState({ }: {}) {
+function JobEmptyState({ }: {}) {
     const router = useRouter()
     const [cookies, setCookie, removeCookie] = useCookies(['user_token']);
     const queryClient = useQueryClient()
-    const createBlogPostMutation = useMutation(createBlogPost, {
+    const createJobPostMutation = useMutation(createJobPost, {
         onSuccess: (data) => {
             console.log("data", data);
             const newPostId = data.id;
-            queryClient.invalidateQueries('blogposts');
+            queryClient.invalidateQueries('jobposts');
             router.push(`/portal/my_posts/draft?id=${newPostId}`);
         }
     });
 
     const handleCreateClick = () => {
-        createBlogPostMutation.mutate({
+        createJobPostMutation.mutate({
             authToken: cookies.user_token,
         });
     };
@@ -30,16 +30,16 @@ function BlogEmptyState({ }: {}) {
     return (
         <EmptyState
             image={""}
-            title="No Blog Posts Available yet."
+            title="No Job Posts Available yet."
         >
             <p>
-                There are no blog posts in LesVieux. Publish your first post!
+                There are no job posts in LesVieux. Publish your first post!
             </p>
             <Button
                 appearance="positive"
-                aria-label="add-blog-post"
+                aria-label="add-job-post"
                 onClick={handleCreateClick}>
-                Publish a blog post.
+                Publish a job post.
             </Button>
         </EmptyState>
     );
@@ -51,35 +51,35 @@ export type ConfirmationModalData = {
 } | null
 
 type TableProps = {
-    blogPosts: BlogPost[];
+    jobPosts: JobPost[];
 };
 
-export function BlogPostsTable({ blogPosts: rows }: TableProps) {
+export function JobPostsTable({ jobPosts: rows }: TableProps) {
     const [cookies, setCookie, removeCookie] = useCookies(['user_token']);
     const [confirmationModalData, setConfirmationModalData] = useState<ConfirmationModalData | null>(null);
     const router = useRouter();
 
-    const mutationFunc = (mutation: UseMutationResult<any, unknown, RequiredBlogPostParams, unknown>, params: RequiredBlogPostParams) => {
+    const mutationFunc = (mutation: UseMutationResult<any, unknown, RequiredJobPostParams, unknown>, params: RequiredJobPostParams) => {
         mutation.mutate(params)
     }
     const queryClient = useQueryClient()
-    const deleteMutation = useMutation(deleteMyBlogPost, {
+    const deleteMutation = useMutation(deleteMyJobPost, {
         onSuccess: () => {
-            queryClient.invalidateQueries('blogposts')
+            queryClient.invalidateQueries('jobposts')
         }
     })
 
-    const createBlogPostMutation = useMutation(createBlogPost, {
+    const createJobPostMutation = useMutation(createJobPost, {
         onSuccess: (data) => {
             console.log("data", data);
             const newPostId = data.id;
-            queryClient.invalidateQueries('blogposts');
+            queryClient.invalidateQueries('jobposts');
             router.push(`/portal/my_posts/draft?id=${newPostId}`);
         }
     });
 
     const handleCreateClick = () => {
-        createBlogPostMutation.mutate({
+        createJobPostMutation.mutate({
             authToken: cookies.user_token,
         });
     };
@@ -88,7 +88,7 @@ export function BlogPostsTable({ blogPosts: rows }: TableProps) {
     const handleDelete = (id: number) => {
         setConfirmationModalData({
             onMouseDownFunc: () => mutationFunc(deleteMutation, { id: id.toString(), authToken: cookies.user_token }),
-            warningText: "Deleting a blog post means it will be completely removed forever. This action cannot be undone.",
+            warningText: "Deleting a job post means it will be completely removed forever. This action cannot be undone.",
         });
     };
 
@@ -96,8 +96,8 @@ export function BlogPostsTable({ blogPosts: rows }: TableProps) {
         router.push(`/portal/my_posts/draft?id=${id}`);
     };
 
-    const blogPostsRows = rows.map((blogPost) => {
-        const { id, title, author, status, created_at } = blogPost;
+    const jobPostsRows = rows.map((jobPost) => {
+        const { id, title, author, status, created_at } = jobPost;
         return {
             sortData: {
                 title,
@@ -147,7 +147,7 @@ export function BlogPostsTable({ blogPosts: rows }: TableProps) {
                     >
                         <Icon
                             name="external-link" />
-                        {' '}Go to blog
+                        {' '}Go to job
                     </Button>
                     {rows.length > 0 && (
                         <>
@@ -167,7 +167,7 @@ export function BlogPostsTable({ blogPosts: rows }: TableProps) {
         >
             <div className="u-fixed-width">
                 <MainTable
-                    emptyStateMsg={<BlogEmptyState />}
+                    emptyStateMsg={<JobEmptyState />}
                     expanding
                     sortable
                     headers={[
@@ -188,7 +188,7 @@ export function BlogPostsTable({ blogPosts: rows }: TableProps) {
                             className: "u-align--right has-overflow"
                         }
                     ]}
-                    rows={blogPostsRows}
+                    rows={jobPostsRows}
                 />
                 {confirmationModalData != null && (
                     <ConfirmationModal

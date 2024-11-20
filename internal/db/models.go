@@ -11,7 +11,7 @@ type Account struct {
 	Role         int64
 }
 
-type BlogPost struct {
+type JobPost struct {
 	ID        int64
 	Title     string
 	Content   string

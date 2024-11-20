@@ -10,8 +10,6 @@ func NewLesVieuxRouter(config *HandlerConfig) http.Handler {
 	apiV1Router := http.NewServeMux()
 
 	// No Auth
-	apiV1Router.HandleFunc("GET /published_posts", ListPublicBlogPosts(config))
-	apiV1Router.HandleFunc("GET /published_posts/{id}", GetPublicBlogPost(config))
 	apiV1Router.HandleFunc("POST /login", Login(config))
 	apiV1Router.HandleFunc("GET /status", GetStatus(config))
 
@@ -19,9 +17,9 @@ func NewLesVieuxRouter(config *HandlerConfig) http.Handler {
 	apiV1Router.HandleFunc("POST /accounts", adminOrFirstUser(config.JWTSecret, config.DBQueries, CreateAccount(config)))
 
 	// Admin Only
-	apiV1Router.HandleFunc("GET /posts", adminOnly(config.JWTSecret, ListBlogPosts(config)))
-	apiV1Router.HandleFunc("GET /posts/{post_id}", adminOnly(config.JWTSecret, GetBlogPost(config)))
-	apiV1Router.HandleFunc("DELETE /posts/{post_id}", adminOnly(config.JWTSecret, DeleteBlogPost(config)))
+	apiV1Router.HandleFunc("GET /posts", adminOnly(config.JWTSecret, ListJobPosts(config)))
+	apiV1Router.HandleFunc("GET /posts/{post_id}", adminOnly(config.JWTSecret, GetJobPost(config)))
+	apiV1Router.HandleFunc("DELETE /posts/{post_id}", adminOnly(config.JWTSecret, DeleteJobPost(config)))
 	apiV1Router.HandleFunc("GET /accounts", adminOnly(config.JWTSecret, ListAccounts(config)))
 	apiV1Router.HandleFunc("GET /accounts/{user_id}", adminOnly(config.JWTSecret, GetAccount(config)))
 	apiV1Router.HandleFunc("POST /accounts/{user_id}/change_password", adminOnly(config.JWTSecret, ChangeAccountPassword(config)))
@@ -30,11 +28,6 @@ func NewLesVieuxRouter(config *HandlerConfig) http.Handler {
 	// Author (me) Only
 	apiV1Router.HandleFunc("GET /me", Me(config.JWTSecret, GetMyAccount(config)))
 	apiV1Router.HandleFunc("POST /me/change_password", Me(config.JWTSecret, ChangeMyAccountPassword(config)))
-	apiV1Router.HandleFunc("GET /me/posts", Me(config.JWTSecret, ListMyBlogPosts(config)))
-	apiV1Router.HandleFunc("POST /me/posts", Me(config.JWTSecret, CreateMyBlogPost(config)))
-	apiV1Router.HandleFunc("GET /me/posts/{post_id}", Me(config.JWTSecret, GetMyBlogPost(config)))
-	apiV1Router.HandleFunc("PUT /me/posts/{post_id}", Me(config.JWTSecret, UpdateMyBlogPost(config)))
-	apiV1Router.HandleFunc("DELETE /me/posts/{post_id}", Me(config.JWTSecret, DeleteMyBlogPost(config)))
 
 	frontendHandler := newFrontendFileServer()
 

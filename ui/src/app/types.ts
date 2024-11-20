@@ -1,4 +1,4 @@
-export type BlogPost = {
+export type JobPost = {
     id: number;
     title: string;
     content: string;

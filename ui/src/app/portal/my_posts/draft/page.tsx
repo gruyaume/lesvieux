@@ -2,8 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { ChangeEvent, useState, useEffect, Suspense } from "react";
-import { getBlogPost, updateMyBlogPost, deleteBlogPost } from "../../../queries";
-import { BlogPost } from "../../../types";
+import { getJobPost, updateMyJobPost, deleteJobPost } from "../../../queries";
+import { JobPost } from "../../../types";
 import { useCookies } from "react-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input, Button, Form, Panel, Textarea, Icon, Modal } from "@canonical/react-components";
@@ -17,8 +17,8 @@ function DraftContent() {
     const router = useRouter();
     const auth = useAuth();
     const [cookies] = useCookies(['user_token']);
-    const [BlogPostTitleString, setBlogPostTitleString] = useState<string>("");
-    const [BlogPostContentString, setBlogPostContentString] = useState<string>("");
+    const [JobPostTitleString, setJobPostTitleString] = useState<string>("");
+    const [JobPostContentString, setJobPostContentString] = useState<string>("");
     const [errorText, setErrorText] = useState<string>("");
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
@@ -26,9 +26,9 @@ function DraftContent() {
     const [showSuccessIcon, setShowSuccessIcon] = useState<boolean>(false);
     const queryClient = useQueryClient();
 
-    const { data: blogPostData, isLoading, isError } = useQuery<BlogPost, Error>({
-        queryKey: ['blogpost', postId],
-        queryFn: () => getBlogPost({ authToken: cookies.user_token, id: postId as string }),
+    const { data: jobPostData, isLoading, isError } = useQuery<JobPost, Error>({
+        queryKey: ['jobpost', postId],
+        queryFn: () => getJobPost({ authToken: cookies.user_token, id: postId as string }),
         enabled: !!postId,
         retry: (failureCount, error): boolean => {
             if (error.message.includes("401")) {
@@ -39,17 +39,17 @@ function DraftContent() {
     });
 
     useEffect(() => {
-        if (blogPostData) {
-            setBlogPostTitleString(blogPostData?.title || "");
-            setBlogPostContentString(blogPostData?.content || "");
+        if (jobPostData) {
+            setJobPostTitleString(jobPostData?.title || "");
+            setJobPostContentString(jobPostData?.content || "");
         }
-    }, [blogPostData]);
+    }, [jobPostData]);
 
-    const saveBlogPostMutation = useMutation(updateMyBlogPost, {
+    const saveJobPostMutation = useMutation(updateMyJobPost, {
         onSuccess: () => {
             setErrorText("");
-            queryClient.invalidateQueries('blogposts');
-            queryClient.invalidateQueries('blogpost');
+            queryClient.invalidateQueries('jobposts');
+            queryClient.invalidateQueries('jobpost');
 
             setShowSuccessIcon(true);
             setTimeout(() => setShowSuccessIcon(false), 1000);
@@ -59,22 +59,22 @@ function DraftContent() {
         }
     });
 
-    const publishBlogPostMutation = useMutation(updateMyBlogPost, {
+    const publishJobPostMutation = useMutation(updateMyJobPost, {
         onSuccess: () => {
             setErrorText("");
             setSubmitted(true);
-            queryClient.invalidateQueries('blogposts');
-            queryClient.invalidateQueries('blogpost');
+            queryClient.invalidateQueries('jobposts');
+            queryClient.invalidateQueries('jobpost');
         },
         onError: (e: Error) => {
             setErrorText(e.message);
         }
     });
 
-    const deleteBlogPostMutation = useMutation(deleteBlogPost, {
+    const deleteJobPostMutation = useMutation(deleteJobPost, {
         onSuccess: () => {
             setErrorText("");
-            queryClient.invalidateQueries('blogposts');
+            queryClient.invalidateQueries('jobposts');
             router.push("/portal/my_posts");
         },
         onError: (e: Error) => {
@@ -82,16 +82,16 @@ function DraftContent() {
         }
     });
 
-    const handleBlogPostTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setBlogPostTitleString(event.target.value);
+    const handleJobPostTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setJobPostTitleString(event.target.value);
     };
 
-    const handleBlogPostContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-        setBlogPostContentString(event.target.value);
+    const handleJobPostContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        setJobPostContentString(event.target.value);
     };
 
     const handleShowClick = async () => {
-        const processedContent = await remark().use(html).process(BlogPostContentString);
+        const processedContent = await remark().use(html).process(JobPostContentString);
         setRenderedContent(processedContent.toString());
         setShowModal(true);
     };
@@ -104,11 +104,11 @@ function DraftContent() {
 
     if (!postId) {
         // Handle the case where postId is not available
-        return <div>No blog post ID found.</div>;
+        return <div>No job post ID found.</div>;
     }
 
     const handleDiscardClick = () => {
-        deleteBlogPostMutation.mutate({
+        deleteJobPostMutation.mutate({
             authToken: cookies.user_token,
             id: postId
         });
@@ -144,12 +144,12 @@ function DraftContent() {
                 boxSizing: "border-box"
             }}>
                 <Panel
-                    title="Edit Blog Post"
+                    title="Edit Job Post"
                     controls={
                         <>
                             <Button
                                 appearance="base"
-                                disabled={BlogPostTitleString === "" || BlogPostContentString === ""}
+                                disabled={JobPostTitleString === "" || JobPostContentString === ""}
                                 onClick={handleShowClick}>
                                 <Icon name="show" />
                             </Button>
@@ -171,8 +171,8 @@ function DraftContent() {
                             id="InputTitle"
                             type="text"
                             placeholder="Title"
-                            value={BlogPostTitleString}
-                            onChange={handleBlogPostTitleChange}
+                            value={JobPostTitleString}
+                            onChange={handleJobPostTitleChange}
                             style={{
                                 backgroundColor: "white",
                                 border: "1px solid #ddd",
@@ -180,10 +180,10 @@ function DraftContent() {
                             }}
                         />
                         <Textarea
-                            placeholder={`Write your blog post here. You can use markdown to format your text.`}
+                            placeholder={`Write your job post here. You can use markdown to format your text.`}
                             rows={20}
-                            value={BlogPostContentString} // Use the fetched content
-                            onChange={handleBlogPostContentChange}
+                            value={JobPostContentString} // Use the fetched content
+                            onChange={handleJobPostContentChange}
                             error={errorText}
                             style={{
                                 backgroundColor: "white",
@@ -194,15 +194,15 @@ function DraftContent() {
                         <Button
                             appearance="positive"
                             name="submit"
-                            disabled={BlogPostTitleString === "" || BlogPostContentString === ""}
+                            disabled={JobPostTitleString === "" || JobPostContentString === ""}
                             onClick={(event) => {
                                 event.preventDefault();
-                                publishBlogPostMutation.mutate({
+                                publishJobPostMutation.mutate({
                                     authToken: cookies.user_token,
                                     id: postId,
                                     status: "published",
-                                    title: BlogPostTitleString,
-                                    content: BlogPostContentString
+                                    title: JobPostTitleString,
+                                    content: JobPostContentString
                                 });
                             }}
                         >
@@ -211,15 +211,15 @@ function DraftContent() {
                         <Button
                             appearance="base"
                             name="save"
-                            disabled={BlogPostTitleString === "" || BlogPostContentString === ""}
+                            disabled={JobPostTitleString === "" || JobPostContentString === ""}
                             onClick={(event) => {
                                 event.preventDefault();
-                                saveBlogPostMutation.mutate({
+                                saveJobPostMutation.mutate({
                                     authToken: cookies.user_token,
                                     id: postId,
                                     status: "draft",
-                                    title: BlogPostTitleString,
-                                    content: BlogPostContentString
+                                    title: JobPostTitleString,
+                                    content: JobPostContentString
                                 });
                             }}
                         >
@@ -233,7 +233,7 @@ function DraftContent() {
                         title="Preview"
                         close={() => setShowModal(false)}
                     >
-                        <h2>{BlogPostTitleString}</h2>
+                        <h2>{JobPostTitleString}</h2>
                         <h5>By: {auth.user.username}</h5>
                         <h6>{today}</h6>
                         <div

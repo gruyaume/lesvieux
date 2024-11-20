@@ -5,13 +5,13 @@ import ReaderNavigation from "./nav";
 import { formatDate } from "./utils";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./portal/auth/authContext";
-import { getStatus, ListPublicBlogPosts } from "./queries";
+import { getStatus, ListPublicJobPosts } from "./queries";
 import { statusResponseResult } from "./types";
 import { remark } from 'remark';
 import html from 'remark-html';
 import { useState, useEffect } from 'react';
 
-interface BlogPost {
+interface JobPost {
     id: number;
     title: string;
     content: string;
@@ -26,17 +26,17 @@ export default function FrontPage() {
         queryKey: "status",
         queryFn: () => getStatus()
     });
-    const { data: blogPosts, isLoading, isError, error } = useQuery<BlogPost[], Error>({
-        queryKey: "blogPosts",
-        queryFn: ListPublicBlogPosts,
+    const { data: jobPosts, isLoading, isError, error } = useQuery<JobPost[], Error>({
+        queryKey: "jobPosts",
+        queryFn: ListPublicJobPosts,
     });
 
-    const [processedPosts, setProcessedPosts] = useState<BlogPost[]>([]);
+    const [processedPosts, setProcessedPosts] = useState<JobPost[]>([]);
 
     useEffect(() => {
         const processContent = async () => {
-            if (blogPosts) {
-                const postsWithHtml = await Promise.all(blogPosts.map(async (post) => {
+            if (jobPosts) {
+                const postsWithHtml = await Promise.all(jobPosts.map(async (post) => {
                     const processedContent = await remark()
                         .use(html)
                         .process(post.content);
@@ -47,7 +47,7 @@ export default function FrontPage() {
         };
 
         processContent();
-    }, [blogPosts]);
+    }, [jobPosts]);
 
     if (!auth.firstUserCreated && (statusQuery.data && !statusQuery.data.initialized)) {
         router.push("/portal/initialize");
@@ -65,7 +65,7 @@ export default function FrontPage() {
                         <h2>{post.title}</h2>
                         <h5>By: {post.author}</h5>
                         <h6>{formatDate(post.created_at)}</h6>
-                        <div className="blog-post-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+                        <div className="job-post-content" dangerouslySetInnerHTML={{ __html: post.content }} />
                         <hr />
                     </div>
                 ))}
