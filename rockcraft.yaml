@@ -1,0 +1,36 @@
+name: lesvieux
+title: LesVieux
+base: bare
+build-base: ubuntu@24.04
+adopt-info: lesvieux-release-data
+summary: LesVieux is a job platform for seniors.
+description: |
+  LesVieux is a job platform for seniors. It allows seniors to find jobs that
+  are adapted to their needs and skills. It also allows companies to find
+  seniors to fill their job offers.
+license: Apache-2.0
+platforms:
+  amd64:
+
+parts:
+  lesvieux:
+    plugin: go
+    source: .
+    build-snaps:
+      - go/1.22/stable
+      - node/20/stable
+    override-build: |
+      npm install --prefix ui
+      npm run build --prefix ui
+      craftctl default
+    stage-packages:
+      - ca-certificates_data
+      - libc6_libs
+      - base-files_lib
+
+  lesvieux-release-data:
+    plugin: nil
+    source: .
+    override-build: |
+      version="$(cat version/VERSION)"
+      craftctl set version="$version"

@@ -1,0 +1,42 @@
+{
+  "name": "lesvieux",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test-live": "vitest"
+  },
+  "dependencies": {
+    "@canonical/react-components": "^1.7.0",
+    "jwt-decode": "^4.0.0",
+    "next": "14.2.14",
+    "pkijs": "^3.2.4",
+    "react": "^18",
+    "react-cookie": "^7.2.0",
+    "react-dom": "^18",
+    "react-query": "^3.39.3",
+    "remark": "^15.0.1",
+    "remark-html": "^16.0.1",
+    "sass": "^1.79.4",
+    "vanilla-framework": "^4.16.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.1",
+    "@types/node": "^22",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4.3.2",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.14",
+    "jsdom": "^25.0.1",
+    "typescript": "^5",
+    "vitest": "^2.1.2"
+  },
+  "overrides": {
+    "rollup": "npm:@rollup/wasm-node@*"
+  }
+}

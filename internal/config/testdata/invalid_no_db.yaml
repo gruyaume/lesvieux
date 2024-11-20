@@ -1,0 +1,4 @@
+port: 8000
+tls:
+  cert: "testdata/cert.pem"
+  key: "testdata/key.pem"
