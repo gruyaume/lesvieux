@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "../auth/authContext"
 import { statusResponseResult } from "../../types"
 import Logo from "../../components/logo"
-import { Navigation, Notification, Input, PasswordToggle, Button, Form } from "@canonical/react-components";
+import { Navigation, Notification, Input, PasswordToggle, Button, Form, StatusLabel } from "@canonical/react-components";
 
 export default function LoginPage() {
     const router = useRouter()
@@ -58,8 +58,13 @@ export default function LoginPage() {
             <Navigation
                 items={[]}
                 logo={
-                    <Logo >
-                    </Logo>
+                    <div >
+                        <Logo />
+                        <StatusLabel
+                            appearance="information">
+                            Employer
+                        </StatusLabel>
+                    </div>
                 }
             />
             <div style={{

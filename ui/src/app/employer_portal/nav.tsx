@@ -2,7 +2,7 @@
 
 import { SetStateAction, Dispatch, useState, useContext } from "react"
 import { useQuery } from "react-query";
-import { Aside, AsideContext } from "./aside";
+import { AsideContext } from "./aside";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./auth/authContext";
 import { ChangePasswordModalData, ChangeMyPasswordModal, ChangePasswordModalContext } from "./components";
@@ -42,7 +42,15 @@ export function SideBar({ activePath, sidebarVisible }: { activePath: string, si
         <header className={sidebarVisible ? "l-navigation" : "l-navigation"}>
             <Panel
                 stickyHeader
-                title={<Logo />}
+                title={
+                    <div >
+                        <Logo />
+                        <StatusLabel
+                            appearance="information">
+                            Employer
+                        </StatusLabel>
+                    </div>
+                }
             >
                 <SideNavigation
                     hasIcons

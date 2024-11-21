@@ -43,13 +43,20 @@ export function SideBar({ activePath, sidebarVisible }: { activePath: string, si
         <header className={sidebarVisible ? "l-navigation" : "l-navigation"}>
             <Panel
                 stickyHeader
-                title={<Logo />}
+                title={
+                    <div >
+                        <Logo />
+                        <StatusLabel
+                            appearance="information">
+                            Admin
+                        </StatusLabel>
+                    </div>
+                }
             >
                 <SideNavigation
                     hasIcons
                 />
                 <div >
-                    <h3 className="p-side-navigation__heading">Admin</h3>
                     <div className="p-side-navigation--icons">
                         <nav aria-label="Main">
                             <ul className="p-side-navigation__list" >
@@ -89,7 +96,9 @@ export function SideBar({ activePath, sidebarVisible }: { activePath: string, si
                                 <div className="p-side-navigation__link p-contextual-menu__toggle" onClick={() => setMenuOpen(!menuOpen)} aria-current={menuOpen} style={{ cursor: "pointer" }}>
                                     <i className="p-icon--user p-side-navigation__icon"></i>
                                     <span className="p-side-navigation__label">
-                                        <span className="p-side-navigation__label">{auth.user.email}</span>
+                                        <span className="p-side-navigation__label">
+                                            {auth.user.email.split("@")[0]}
+                                        </span>
                                     </span>
                                     <div className="p-side-navigation__status">
                                         <i className="p-icon--menu"></i>

@@ -33,7 +33,7 @@ export default function Initialize() {
                     secure: true,
                     expires: new Date(new Date().getTime() + 60 * 60 * 1000),
                 })
-                router.push('/admin_portal/users')
+                router.push('/admin_portal/employers')
             } else {
                 setErrorText("Failed to retrieve token.")
             }

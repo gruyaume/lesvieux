@@ -461,6 +461,22 @@ export async function deleteEmployer(params: { id: string, authToken: string }) 
     return
 }
 
+export async function createEmployer(params: { authToken: string, name: string }) {
+    const response = await fetch("/api/v1/employers", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer " + params.authToken
+        },
+        body: JSON.stringify({ "name": params.name })
+    })
+    const respData = await response.json()
+    if (!response.ok) {
+        throw new Error(`${response.status}: ${HTTPStatus(response.status)}. ${respData.error}`)
+    }
+    return respData.result
+}
+
 export async function isLoggedIn(authToken: string): Promise<boolean> {
     const response = await fetch("/api/v1/admin/accounts/me", {
         method: 'GET',
