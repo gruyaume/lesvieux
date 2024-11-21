@@ -33,7 +33,7 @@ export default function Initialize() {
                     secure: true,
                     expires: new Date(new Date().getTime() + 60 * 60 * 1000),
                 })
-                router.push('/admin_portal/users')
+                router.push('/admin_portal/employers')
             } else {
                 setErrorText("Failed to retrieve token.")
             }
@@ -42,7 +42,7 @@ export default function Initialize() {
             setErrorText(e.message)
         }
     })
-    const postUserMutation = useMutation(postFirstAdminUser, {
+    const postAdminAccountMutation = useMutation(postFirstAdminUser, {
         onSuccess: () => {
             setErrorText("")
             auth.setFirstUserCreated(true)
@@ -114,7 +114,7 @@ export default function Initialize() {
                                     onClick={(event) => {
                                         event.preventDefault();
                                         if (passwordsMatch && passwordIsValid(password1)) {
-                                            postUserMutation.mutate({ email: email, password: password1 });
+                                            postAdminAccountMutation.mutate({ email: email, password: password1 });
                                         }
                                     }}
                                 >

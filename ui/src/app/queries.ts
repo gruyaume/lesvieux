@@ -1,4 +1,4 @@
-import { JobPost, UserEntry } from "./types"
+import { JobPost, UserEntry, EmployerEntry } from "./types"
 import { HTTPStatus } from "./utils"
 
 export type RequiredJobPostParams = {
@@ -418,8 +418,8 @@ export async function postFirstAdminUser(userForm: { email: string, password: st
     return respData.result
 }
 
-export async function postUser(userForm: { authToken: string, email: string, password: string }) {
-    const response = await fetch("/api/v1/employers", {
+export async function postAdminAccount(userForm: { authToken: string, email: string, password: string }) {
+    const response = await fetch("/api/v1/admin/accounts", {
         method: "POST",
         body: JSON.stringify({
             "email": userForm.email, "password": userForm.password
@@ -427,6 +427,48 @@ export async function postUser(userForm: { authToken: string, email: string, pas
         headers: {
             'Authorization': "Bearer " + userForm.authToken
         }
+    })
+    const respData = await response.json()
+    if (!response.ok) {
+        throw new Error(`${response.status}: ${HTTPStatus(response.status)}. ${respData.error}`)
+    }
+    return respData.result
+}
+
+export async function listEmployers(params: { authToken: string }): Promise<EmployerEntry[]> {
+    const response = await fetch("/api/v1/employers", {
+        headers: { "Authorization": "Bearer " + params.authToken }
+    })
+    // The response should look like:
+    // {"result":[{"id":1,"name":"my company"}]}
+    const respData = await response.json()
+    if (!response.ok) {
+        throw new Error(`${response.status}: ${HTTPStatus(response.status)}. ${respData.error}`)
+    }
+    return respData.result
+}
+
+export async function deleteEmployer(params: { id: string, authToken: string }) {
+    const response = await fetch("/api/v1/employers/" + params.id, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': "Bearer " + params.authToken
+        }
+    })
+    if (!response.ok) {
+        throw new Error(`${response.status}: ${HTTPStatus(response.status)}. ${response.statusText}`)
+    }
+    return
+}
+
+export async function createEmployer(params: { authToken: string, name: string }) {
+    const response = await fetch("/api/v1/employers", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer " + params.authToken
+        },
+        body: JSON.stringify({ "name": params.name })
     })
     const respData = await response.json()
     if (!response.ok) {

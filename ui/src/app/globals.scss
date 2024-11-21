@@ -7,7 +7,8 @@
 // Include Vanilla Framework icons
 @include vf-p-icon-canvas;
 @include vf-p-icon-begin-downloading;
-@include vf-p-icon-containers;
+@include vf-p-icon-file;
+@include vf-p-icon-exposed;
 
 .p-panel__content {
     overflow: visible;

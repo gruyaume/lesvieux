@@ -8,9 +8,9 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "../auth/authContext"
 import { statusResponseResult } from "../../types"
 import Logo from "../../components/logo"
-import { Navigation, Notification, Input, PasswordToggle, Button, Form } from "@canonical/react-components";
+import { Navigation, Notification, Input, PasswordToggle, Button, Form, StatusLabel } from "@canonical/react-components";
 
-export default function LoginPage() {
+export default function AdminLogin() {
     const router = useRouter()
     const auth = useAuth()
     const [cookies, setCookie, removeCookie] = useCookies(['user_token']);
@@ -19,7 +19,7 @@ export default function LoginPage() {
     })
     useEffect(() => {
         if (auth.user) {
-            router.push("/admin_portal/users");
+            router.push("/admin_portal/employers");
         }
     }, [auth.user, router]);
 
@@ -37,7 +37,7 @@ export default function LoginPage() {
                     path: "/admin_portal",
                     expires: new Date(new Date().getTime() + 60 * 60 * 1000),
                 })
-                router.push('/admin_portal/users')
+                router.push('/admin_portal/employers')
             } else {
                 setErrorText("Failed to retrieve token.")
             }
@@ -58,8 +58,13 @@ export default function LoginPage() {
             <Navigation
                 items={[]}
                 logo={
-                    <Logo >
-                    </Logo>
+                    <div >
+                        <Logo />
+                        <StatusLabel
+                            appearance="information">
+                            Admin
+                        </StatusLabel>
+                    </div>
                 }
             />
             <div style={{

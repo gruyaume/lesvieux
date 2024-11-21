@@ -22,6 +22,12 @@ export type UserEntry = {
     role: number
 }
 
+export type EmployerEntry = {
+    id: number
+    name: string
+}
+
+
 export type statusResponseResult = {
     initialized: boolean
 }

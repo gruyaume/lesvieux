@@ -46,7 +46,7 @@ export function AdminUsersTable({ users }: TableProps) {
             stickyHeader
             title="Users"
             controls={users.length > 0 &&
-                <Button appearance="positive" onClick={() => { asideContext.setExtraData(null); setAsideIsOpen(true) }}>Create New User</Button>
+                <Button appearance="positive" onClick={() => { asideContext.setExtraData(null); setAsideIsOpen(true) }}>Create User</Button>
             }
         >
             <div className="u-fixed-width">
