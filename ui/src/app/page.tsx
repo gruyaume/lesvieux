@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import ReaderNavigation from "./nav";
 import { formatDate } from "./utils";
 import { useRouter } from "next/navigation";
-import { useAuth } from "./portal/auth/authContext";
+import { useAuth } from "./employer_portal/auth/authContext";
 import { getStatus, ListPublicJobPosts } from "./queries";
 import { statusResponseResult } from "./types";
 import { remark } from 'remark';
@@ -50,7 +50,7 @@ export default function FrontPage() {
     }, [jobPosts]);
 
     if (!auth.firstUserCreated && (statusQuery.data && !statusQuery.data.initialized)) {
-        router.push("/portal/initialize");
+        router.push("/employer_portal/initialize");
     }
 
     return (

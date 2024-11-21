@@ -12,13 +12,13 @@ export type User = {
     exp: number
     id: number
     role: number // User: 0, Admin: 1
-    username: string
+    email: string
     authToken: string
 }
 
 export type UserEntry = {
     id: number
-    username: string
+    email: string
     role: number
 }
 

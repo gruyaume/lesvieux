@@ -15,14 +15,14 @@ type GetStatusResponse struct {
 
 func GetStatus(env *HandlerConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		numAccounts, err := env.DBQueries.NumAccounts(context.Background())
+		numEmployerAccounts, err := env.DBQueries.NumAdminAccounts(context.Background())
 		if err != nil {
-			log.Println("couldn't retrieve accounts: " + err.Error())
+			log.Println("couldn't retrieve admin accounts: " + err.Error())
 			writeError(w, http.StatusInternalServerError, "internal error")
 			return
 		}
 		response := GetStatusResponse{
-			Initialized: numAccounts > 0,
+			Initialized: numEmployerAccounts > 0,
 			Version:     version.GetVersion(),
 		}
 		w.WriteHeader(http.StatusOK)

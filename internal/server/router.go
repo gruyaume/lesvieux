@@ -10,24 +10,32 @@ func NewLesVieuxRouter(config *HandlerConfig) http.Handler {
 	apiV1Router := http.NewServeMux()
 
 	// No Auth
-	apiV1Router.HandleFunc("POST /login", Login(config))
+	apiV1Router.HandleFunc("POST /employers/login", EmployersLogin(config))
+	apiV1Router.HandleFunc("POST /admin/login", AdminLogin(config))
 	apiV1Router.HandleFunc("GET /status", GetStatus(config))
 
 	// Admin or First User
-	apiV1Router.HandleFunc("POST /accounts", adminOrFirstUser(config.JWTSecret, config.DBQueries, CreateAccount(config)))
+	apiV1Router.HandleFunc("POST /admin/accounts", adminOrFirstUser(config.JWTSecret, config.DBQueries, CreateAdminAccount(config)))
 
 	// Admin Only
 	apiV1Router.HandleFunc("GET /posts", adminOnly(config.JWTSecret, ListJobPosts(config)))
 	apiV1Router.HandleFunc("GET /posts/{post_id}", adminOnly(config.JWTSecret, GetJobPost(config)))
-	apiV1Router.HandleFunc("DELETE /posts/{post_id}", adminOnly(config.JWTSecret, DeleteJobPost(config)))
-	apiV1Router.HandleFunc("GET /accounts", adminOnly(config.JWTSecret, ListAccounts(config)))
-	apiV1Router.HandleFunc("GET /accounts/{user_id}", adminOnly(config.JWTSecret, GetAccount(config)))
-	apiV1Router.HandleFunc("POST /accounts/{user_id}/change_password", adminOnly(config.JWTSecret, ChangeAccountPassword(config)))
-	apiV1Router.HandleFunc("DELETE /accounts/{user_id}", adminOnly(config.JWTSecret, DeleteAccount(config)))
+	apiV1Router.HandleFunc("POST /employers", adminOnly(config.JWTSecret, CreateEmployer(config)))
+	apiV1Router.HandleFunc("GET /employers", adminOnly(config.JWTSecret, ListEmployers(config)))
+	apiV1Router.HandleFunc("GET /employers/{employer_id}", adminOnly(config.JWTSecret, GetEmployer(config)))
+	apiV1Router.HandleFunc("DELETE /employers/{employer_id}", adminOnly(config.JWTSecret, DeleteEmployer(config)))
+	apiV1Router.HandleFunc("GET /employers/accounts", adminOnly(config.JWTSecret, ListEmployerAccounts(config)))
+	apiV1Router.HandleFunc("POST /employers/accounts", adminOnly(config.JWTSecret, CreateEmployerAccount(config)))
+	apiV1Router.HandleFunc("GET /admin/accounts", adminOnly(config.JWTSecret, ListAdminAccounts(config)))
+	apiV1Router.HandleFunc("GET /admin/accounts/{account_id}", adminOnly(config.JWTSecret, GetAdminAccount(config)))
+	apiV1Router.HandleFunc("DELETE /admin/accounts/{account_id}", adminOnly(config.JWTSecret, DeleteAdminAccount(config)))
+	apiV1Router.HandleFunc("POST /admin/accounts/{account_id}/change_password", adminOnly(config.JWTSecret, ChangeAdminAccountPassword(config)))
 
-	// Author (me) Only
-	apiV1Router.HandleFunc("GET /me", Me(config.JWTSecret, GetMyAccount(config)))
-	apiV1Router.HandleFunc("POST /me/change_password", Me(config.JWTSecret, ChangeMyAccountPassword(config)))
+	// Admin (Me) Only
+	apiV1Router.HandleFunc("GET /employers/accounts/me", Me(config.JWTSecret, GetMyEmployerAccount(config)))
+	apiV1Router.HandleFunc("POST /employers/accounts/me/change_password", Me(config.JWTSecret, ChangeMyEmployerAccountPassword(config)))
+	apiV1Router.HandleFunc("GET /admin/accounts/me", Me(config.JWTSecret, GetMyAdminAccount(config)))
+	apiV1Router.HandleFunc("POST /admin/accounts/me/change_password", Me(config.JWTSecret, ChangeMyAdminAccountPassword(config)))
 
 	frontendHandler := newFrontendFileServer()
 

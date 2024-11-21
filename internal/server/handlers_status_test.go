@@ -62,9 +62,8 @@ func TestStatus(t *testing.T) {
 	})
 
 	t.Run("Status - initialized", func(t *testing.T) {
-		var adminToken string
-		var nonAdminToken string
-		t.Run("prepare accounts and tokens", prepareUserAccounts(ts.URL, client, &adminToken, &nonAdminToken))
+		var token string
+		t.Run("prepare accounts and tokens", prepareAdminAccount(ts.URL, client, &token))
 
 		statusCode, statusResponse, err := getStatus(ts.URL, client, "")
 		if err != nil {
