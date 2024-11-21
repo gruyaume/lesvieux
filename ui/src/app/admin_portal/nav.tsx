@@ -54,8 +54,16 @@ export function SideBar({ activePath, sidebarVisible }: { activePath: string, si
                         <nav aria-label="Main">
                             <ul className="p-side-navigation__list" >
                                 <li className="p-side-navigation__item" >
+                                    <a className="p-side-navigation__link" aria-current={activePath.startsWith("/admin_portal/employers")} href="/admin_portal/employers" >
+                                        <i className="p-icon--exposed p-side-navigation__icon"></i>
+                                        <span className="p-side-navigation__label">
+                                            <span className="p-side-navigation__label">Employers</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li className="p-side-navigation__item" >
                                     <a className="p-side-navigation__link" aria-current={activePath.startsWith("/admin_portal/job_posts")} href="/admin_portal/job_posts" >
-                                        <i className="p-icon--containers p-side-navigation__icon"></i>
+                                        <i className="p-icon--file p-side-navigation__icon"></i>
                                         <span className="p-side-navigation__label">
                                             <span className="p-side-navigation__label">Job posts</span>
                                         </span>
