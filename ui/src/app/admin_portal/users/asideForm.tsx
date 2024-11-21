@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "react-query";
 import { passwordIsValid } from "../../utils";
-import { changePassword, postUser } from "../../../queries";
+import { changeAdminAccountPassword, postUser } from "../../queries";
 import { ChangeEvent, useContext, useState } from "react";
-import { AsideContext } from "../../aside";
-import { useAuth } from "../../auth/authContext";
+import { AsideContext } from "../aside";
+import { useAuth } from "../auth/authContext";
 import { Panel, Button, Input, PasswordToggle, Form } from "@canonical/react-components";
 
 export default function UsersPageAsidePanel() {
@@ -43,7 +43,7 @@ function AddNewUserForm() {
             setErrorText(e.message)
         }
     })
-    const [username, setUsername] = useState<string>("")
+    const [email, setEmail] = useState<string>("")
     const [password1, setPassword1] = useState<string>("")
     const [password2, setPassword2] = useState<string>("")
     const passwordsMatch = password1 === password2
@@ -51,17 +51,17 @@ function AddNewUserForm() {
     const password2Error = password2 && !passwordsMatch ? "Passwords do not match" : ""
 
     const [errorText, setErrorText] = useState<string>("")
-    const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => { setUsername(event.target.value) }
+    const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => { setEmail(event.target.value) }
     const handlePassword1Change = (event: ChangeEvent<HTMLInputElement>) => { setPassword1(event.target.value) }
     const handlePassword2Change = (event: ChangeEvent<HTMLInputElement>) => { setPassword2(event.target.value) }
     return (
         <Form>
             <div className="p-form__group row">
                 <Input
-                    id="InputUsername"
-                    label="Username"
+                    id="InputEmail"
+                    label="Email"
                     type="text"
-                    onChange={handleUsernameChange}
+                    onChange={handleEmailChange}
                 />
                 <PasswordToggle
                     help="Password must have 8 or more characters, must include at least one capital letter, one lowercase letter, and either a number or a symbol."
@@ -79,7 +79,7 @@ function AddNewUserForm() {
                 <Button
                     appearance="positive"
                     disabled={!passwordsMatch || !passwordIsValid(password1)}
-                    onClick={(event) => { event.preventDefault(); mutation.mutate({ authToken: (auth.user ? auth.user.authToken : ""), email: username, password: password1 }) }}
+                    onClick={(event) => { event.preventDefault(); mutation.mutate({ authToken: (auth.user ? auth.user.authToken : ""), email: email, password: password1 }) }}
                 >
                     Submit
                 </Button>
@@ -92,7 +92,7 @@ function ChangePasswordForm() {
     const auth = useAuth()
     const asideContext = useContext(AsideContext)
     const queryClient = useQueryClient()
-    const mutation = useMutation(changePassword, {
+    const mutation = useMutation(changeAdminAccountPassword, {
         onSuccess: () => {
             queryClient.invalidateQueries('users')
             setErrorText("")
@@ -115,10 +115,10 @@ function ChangePasswordForm() {
         <Form>
             <div className="p-form__group row">
                 <Input
-                    id="InputUsername"
-                    label="Username"
+                    id="InputEmail"
+                    label="Email"
                     type="text"
-                    value={asideContext.extraData["user"]["username"]}
+                    value={asideContext.extraData["user"]["email"]}
                     disabled={true}
                 />
                 <PasswordToggle

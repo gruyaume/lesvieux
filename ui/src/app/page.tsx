@@ -50,7 +50,7 @@ export default function FrontPage() {
     }, [jobPosts]);
 
     if (!auth.firstUserCreated && (statusQuery.data && !statusQuery.data.initialized)) {
-        router.push("/employer_portal/initialize");
+        router.push("/admin_portal/initialize");
     }
 
     return (

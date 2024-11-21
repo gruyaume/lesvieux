@@ -1,6 +1,6 @@
 "use client"
 
-import { getStatus, employerLogin } from "../../queries"
+import { getStatus, adminLogin } from "../../queries"
 import { useMutation, useQuery } from "react-query"
 import { useState, ChangeEvent, useEffect } from "react"
 import { useCookies } from "react-cookie"
@@ -19,14 +19,14 @@ export default function LoginPage() {
     })
     useEffect(() => {
         if (auth.user) {
-            router.push("/employer_portal/my_posts");
+            router.push("/admin_portal/users");
         }
     }, [auth.user, router]);
 
     if (!auth.firstUserCreated && (statusQuery.data && !statusQuery.data.initialized)) {
-        router.push("/employer_portal/initialize")
+        router.push("/admin_portal/initialize")
     }
-    const mutation = useMutation(employerLogin, {
+    const mutation = useMutation(adminLogin, {
         onSuccess: (response) => {
             const token = response.token;
             if (token) {
@@ -34,10 +34,10 @@ export default function LoginPage() {
                 setCookie('user_token', token, {
                     sameSite: true,
                     secure: true,
-                    path: "/employer_portal",
+                    path: "/admin_portal",
                     expires: new Date(new Date().getTime() + 60 * 60 * 1000),
                 })
-                router.push('/employer_portal/my_posts')
+                router.push('/admin_portal/users')
             } else {
                 setErrorText("Failed to retrieve token.")
             }
