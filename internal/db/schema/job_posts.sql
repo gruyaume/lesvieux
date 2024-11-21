@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS job_posts (
     content TEXT NOT NULL,
     created_at TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'draft',
-    account_id INTEGER NOT NULL,
-    FOREIGN KEY(account_id) REFERENCES accounts(account_id)
+    employer_id INTEGER NOT NULL,
+    FOREIGN KEY(employer_id) REFERENCES employers(employer_id)
 );

@@ -4,18 +4,29 @@
 
 package db
 
-type Account struct {
+type AdminAccount struct {
 	ID           int64
-	Username     string
+	Email        string
 	PasswordHash string
-	Role         int64
+}
+
+type Employer struct {
+	ID   int64
+	Name string
+}
+
+type EmployerAccount struct {
+	ID           int64
+	Email        string
+	PasswordHash string
+	EmployerID   int64
 }
 
 type JobPost struct {
-	ID        int64
-	Title     string
-	Content   string
-	CreatedAt string
-	Status    string
-	AccountID int64
+	ID         int64
+	Title      string
+	Content    string
+	CreatedAt  string
+	Status     string
+	EmployerID int64
 }

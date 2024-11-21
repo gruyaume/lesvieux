@@ -1,5 +1,5 @@
 import { JobPost, UserEntry } from "./types"
-import { HTTPStatus } from "./portal/utils"
+import { HTTPStatus } from "./employer_portal/utils"
 
 export type RequiredJobPostParams = {
     id: string
@@ -252,11 +252,11 @@ export async function deleteMyJobPost(params: RequiredJobPostParams) {
     return
 }
 
-export async function login(userForm: { username: string, password: string }) {
-    const response = await fetch("/api/v1/login", {
+export async function login(userForm: { email: string, password: string }) {
+    const response = await fetch("/api/v1/employers/login", {
         method: "POST",
 
-        body: JSON.stringify({ "username": userForm.username, "password": userForm.password })
+        body: JSON.stringify({ "email": userForm.email, "password": userForm.password })
     })
     // The response should look like:
     // {"result":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJncnV5YXVtZSIsInBlcm1pc3Npb25zIjoxLCJleHAiOjE3MjY5NTY0NjV9.oXnHA7YD8Lm-L1iIYAsqhzPXUGTMgOquCkH5XaGERHs"}}
@@ -284,7 +284,7 @@ export async function changeMyPassword(changePasswordForm: { authToken: string, 
 }
 
 export async function changePassword(changePasswordForm: { authToken: string, id: string, password: string }) {
-    const response = await fetch("/api/v1/accounts/" + changePasswordForm.id + "/change_password", {
+    const response = await fetch("/api/v1/employers/" + changePasswordForm.id + "/change_password", {
         method: "POST",
         headers: {
             'Authorization': 'Bearer ' + changePasswordForm.authToken,
@@ -300,11 +300,11 @@ export async function changePassword(changePasswordForm: { authToken: string, id
 }
 
 export async function listUsers(params: { authToken: string }): Promise<UserEntry[]> {
-    const response = await fetch("/api/v1/accounts", {
+    const response = await fetch("/api/v1/employers", {
         headers: { "Authorization": "Bearer " + params.authToken }
     })
     // The response should look like:
-    // {"result":[{"id":1,"username":"gruyaume","role":1}]}
+    // {"result":[{"id":1,"email":"gruyaume","role":1}]}
     const respData = await response.json()
     if (!response.ok) {
         throw new Error(`${response.status}: ${HTTPStatus(response.status)}. ${respData.error}`)
@@ -313,7 +313,7 @@ export async function listUsers(params: { authToken: string }): Promise<UserEntr
 }
 
 export async function deleteUser(params: { authToken: string, id: string }) {
-    const response = await fetch("/api/v1/accounts/" + params.id, {
+    const response = await fetch("/api/v1/employers/" + params.id, {
         method: 'DELETE',
         headers: {
             'Authorization': "Bearer " + params.authToken
@@ -326,10 +326,10 @@ export async function deleteUser(params: { authToken: string, id: string }) {
     return respData.result
 }
 
-export async function postFirstUser(userForm: { username: string, password: string }) {
-    const response = await fetch("/api/v1/accounts", {
+export async function postFirstUser(userForm: { email: string, password: string }) {
+    const response = await fetch("/api/v1/employers", {
         method: "POST",
-        body: JSON.stringify({ "username": userForm.username, "password": userForm.password }),
+        body: JSON.stringify({ "email": userForm.email, "password": userForm.password }),
         headers: {
             'Content-Type': 'application/json'
         }
@@ -344,11 +344,11 @@ export async function postFirstUser(userForm: { username: string, password: stri
     return respData.result
 }
 
-export async function postUser(userForm: { authToken: string, username: string, password: string }) {
-    const response = await fetch("/api/v1/accounts", {
+export async function postUser(userForm: { authToken: string, email: string, password: string }) {
+    const response = await fetch("/api/v1/employers", {
         method: "POST",
         body: JSON.stringify({
-            "username": userForm.username, "password": userForm.password
+            "email": userForm.email, "password": userForm.password
         }),
         headers: {
             'Authorization': "Bearer " + userForm.authToken

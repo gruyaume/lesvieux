@@ -11,19 +11,19 @@ import (
 
 const createJobPost = `-- name: CreateJobPost :one
 INSERT INTO job_posts (
-  title, content, created_at, status, account_id
+  title, content, created_at, status, employer_id
 ) VALUES (
   ?, ?, ?, ?, ?
 )
-RETURNING id, title, content, created_at, status, account_id
+RETURNING id, title, content, created_at, status, employer_id
 `
 
 type CreateJobPostParams struct {
-	Title     string
-	Content   string
-	CreatedAt string
-	Status    string
-	AccountID int64
+	Title      string
+	Content    string
+	CreatedAt  string
+	Status     string
+	EmployerID int64
 }
 
 func (q *Queries) CreateJobPost(ctx context.Context, arg CreateJobPostParams) (JobPost, error) {
@@ -32,7 +32,7 @@ func (q *Queries) CreateJobPost(ctx context.Context, arg CreateJobPostParams) (J
 		arg.Content,
 		arg.CreatedAt,
 		arg.Status,
-		arg.AccountID,
+		arg.EmployerID,
 	)
 	var i JobPost
 	err := row.Scan(
@@ -41,7 +41,7 @@ func (q *Queries) CreateJobPost(ctx context.Context, arg CreateJobPostParams) (J
 		&i.Content,
 		&i.CreatedAt,
 		&i.Status,
-		&i.AccountID,
+		&i.EmployerID,
 	)
 	return i, err
 }
@@ -57,7 +57,7 @@ func (q *Queries) DeleteJobPost(ctx context.Context, id int64) error {
 }
 
 const getJobPost = `-- name: GetJobPost :one
-SELECT id, title, content, created_at, status, account_id FROM job_posts
+SELECT id, title, content, created_at, status, employer_id FROM job_posts
 WHERE id = ? LIMIT 1
 `
 
@@ -70,33 +70,13 @@ func (q *Queries) GetJobPost(ctx context.Context, id int64) (JobPost, error) {
 		&i.Content,
 		&i.CreatedAt,
 		&i.Status,
-		&i.AccountID,
-	)
-	return i, err
-}
-
-const getPublicJobPost = `-- name: GetPublicJobPost :one
-SELECT id, title, content, created_at, status, account_id FROM job_posts
-WHERE id = ? AND status = 'published'
-LIMIT 1
-`
-
-func (q *Queries) GetPublicJobPost(ctx context.Context, id int64) (JobPost, error) {
-	row := q.db.QueryRowContext(ctx, getPublicJobPost, id)
-	var i JobPost
-	err := row.Scan(
-		&i.ID,
-		&i.Title,
-		&i.Content,
-		&i.CreatedAt,
-		&i.Status,
-		&i.AccountID,
+		&i.EmployerID,
 	)
 	return i, err
 }
 
 const listJobPosts = `-- name: ListJobPosts :many
-SELECT id, title, content, created_at, status, account_id FROM job_posts
+SELECT id, title, content, created_at, status, employer_id FROM job_posts
 ORDER BY created_at DESC
 `
 
@@ -115,7 +95,7 @@ func (q *Queries) ListJobPosts(ctx context.Context) ([]JobPost, error) {
 			&i.Content,
 			&i.CreatedAt,
 			&i.Status,
-			&i.AccountID,
+			&i.EmployerID,
 		); err != nil {
 			return nil, err
 		}
@@ -131,13 +111,13 @@ func (q *Queries) ListJobPosts(ctx context.Context) ([]JobPost, error) {
 }
 
 const listJobPostsByAccount = `-- name: ListJobPostsByAccount :many
-SELECT id, title, content, created_at, status, account_id FROM job_posts
-WHERE account_id = ?
+SELECT id, title, content, created_at, status, employer_id FROM job_posts
+WHERE employer_id = ?
 ORDER BY created_at DESC
 `
 
-func (q *Queries) ListJobPostsByAccount(ctx context.Context, accountID int64) ([]JobPost, error) {
-	rows, err := q.db.QueryContext(ctx, listJobPostsByAccount, accountID)
+func (q *Queries) ListJobPostsByAccount(ctx context.Context, employerID int64) ([]JobPost, error) {
+	rows, err := q.db.QueryContext(ctx, listJobPostsByAccount, employerID)
 	if err != nil {
 		return nil, err
 	}
@@ -151,79 +131,7 @@ func (q *Queries) ListJobPostsByAccount(ctx context.Context, accountID int64) ([
 			&i.Content,
 			&i.CreatedAt,
 			&i.Status,
-			&i.AccountID,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listPublicJobPosts = `-- name: ListPublicJobPosts :many
-SELECT id, title, content, created_at, status, account_id FROM job_posts
-WHERE status = 'published'
-ORDER BY created_at DESC
-`
-
-func (q *Queries) ListPublicJobPosts(ctx context.Context) ([]JobPost, error) {
-	rows, err := q.db.QueryContext(ctx, listPublicJobPosts)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []JobPost
-	for rows.Next() {
-		var i JobPost
-		if err := rows.Scan(
-			&i.ID,
-			&i.Title,
-			&i.Content,
-			&i.CreatedAt,
-			&i.Status,
-			&i.AccountID,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listPublicJobPostsByAccount = `-- name: ListPublicJobPostsByAccount :many
-SELECT id, title, content, created_at, status, account_id FROM job_posts
-WHERE status = 'published' AND account_id = ?
-ORDER BY created_at DESC
-`
-
-func (q *Queries) ListPublicJobPostsByAccount(ctx context.Context, accountID int64) ([]JobPost, error) {
-	rows, err := q.db.QueryContext(ctx, listPublicJobPostsByAccount, accountID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []JobPost
-	for rows.Next() {
-		var i JobPost
-		if err := rows.Scan(
-			&i.ID,
-			&i.Title,
-			&i.Content,
-			&i.CreatedAt,
-			&i.Status,
-			&i.AccountID,
+			&i.EmployerID,
 		); err != nil {
 			return nil, err
 		}

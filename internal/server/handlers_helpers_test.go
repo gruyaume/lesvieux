@@ -10,14 +10,14 @@ import (
 	"github.com/gruyaume/lesvieux/internal/server"
 )
 
-var adminUser = CreateAccountParams{
-	Username: "testadmin",
+var adminUser = CreateAdminAccountParams{
+	Email:    "testadmin",
 	Password: "Admin123",
 }
 
-var validUser = CreateAccountParams{
-	Username: "testuser",
-	Password: "userPass!",
+var validEmployerAccount = CreateEmployerAccountParams{
+	Email:    "testemployer",
+	Password: "Employerpass123!",
 }
 
 func setupServer() (*httptest.Server, *server.HandlerConfig, error) {
@@ -32,21 +32,21 @@ func setupServer() (*httptest.Server, *server.HandlerConfig, error) {
 	return ts, config, nil
 }
 
-func prepareUserAccounts(url string, client *http.Client, adminToken, nonAdminToken *string) func(*testing.T) {
+func prepareAdminAccount(url string, client *http.Client, token *string) func(*testing.T) {
 	return func(t *testing.T) {
-		statusCode, _, err := createAccount(url, client, "", &adminUser)
+		statusCode, _, err := createAdminAccount(url, client, "", &adminUser)
 		if err != nil {
-			t.Fatalf("couldn't create admin user: %s", err)
+			t.Fatalf("couldn't create employer account: %s", err)
 		}
 		if statusCode != http.StatusCreated {
 			t.Fatalf("creating the first request should succeed when unauthorized. status code received: %d", statusCode)
 		}
 
-		loginParams := LoginParams{
-			Username: adminUser.Username,
+		loginParams := AdminLoginParams{
+			Email:    adminUser.Email,
 			Password: adminUser.Password,
 		}
-		statusCode, loginResponse, err := login(url, client, &loginParams)
+		statusCode, loginResponse, err := adminLogin(url, client, &loginParams)
 		if err != nil {
 			t.Fatalf("couldn't login admin user: %s", err)
 		}
@@ -54,29 +54,34 @@ func prepareUserAccounts(url string, client *http.Client, adminToken, nonAdminTo
 			t.Fatalf("the admin login request should have succeeded. status code received: %d", statusCode)
 		}
 
-		*adminToken = loginResponse.Result.Token
+		*token = loginResponse.Result.Token
 
-		statusCode, _, err = createAccount(url, client, *adminToken, &validUser)
+	}
+}
+
+func prepareEmployerAccount(url string, client *http.Client, adminToken *string, employerToken *string) func(*testing.T) {
+	return func(t *testing.T) {
+		statusCode, _, err := createEmployerAccount(url, client, *adminToken, &validEmployerAccount)
 		if err != nil {
-			t.Fatalf("couldn't create test user: %s", err)
+			t.Fatalf("couldn't create employer account: %s", err)
 		}
-
 		if statusCode != http.StatusCreated {
-			t.Fatalf("creating the second request should have succeeded given the admin auth header. status code received: %d", statusCode)
+			t.Fatalf("creating the first request should succeed when unauthorized. status code received: %d", statusCode)
 		}
 
-		loginParams = LoginParams{
-			Username: validUser.Username,
-			Password: validUser.Password,
+		loginParams := EmployerLoginParams{
+			Email:    validEmployerAccount.Email,
+			Password: validEmployerAccount.Password,
 		}
-		statusCode, loginResponse, err = login(url, client, &loginParams)
+		statusCode, loginResponse, err := employerLogin(url, client, &loginParams)
 		if err != nil {
-			t.Fatalf("couldn't login test user: %s", err)
+			t.Fatalf("couldn't login employer user: %s", err)
 		}
 		if statusCode != http.StatusOK {
-			t.Fatalf("the test user login request should have succeeded. status code received: %d", statusCode)
+			t.Fatalf("the employer login request should have succeeded. status code received: %d", statusCode)
 		}
 
-		*nonAdminToken = loginResponse.Result.Token
+		*employerToken = loginResponse.Result.Token
+
 	}
 }

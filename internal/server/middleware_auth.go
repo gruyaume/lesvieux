@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	UserRole  int64 = 0
-	AdminRole int64 = 1
+	ApplicantRole int64 = 0
+	AdminRole     int64 = 1
+	EmployerRole  int64 = 2
 )
 
 type contextKey string
@@ -62,7 +63,7 @@ func Me(jwtSecret []byte, handler func(http.ResponseWriter, *http.Request)) func
 // The adminOrFirstUser middleware checks if the user has admin role or if the user is the first user before allowing access to the handler.
 func adminOrFirstUser(jwtSecret []byte, db *db.Queries, handler func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		numUsers, err := db.NumAccounts(context.Background())
+		numUsers, err := db.NumEmployerAccounts(context.Background())
 		if err != nil {
 			log.Println("couldn't retrieve accounts: " + err.Error())
 			writeError(w, http.StatusInternalServerError, "internal error")

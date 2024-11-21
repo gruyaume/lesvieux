@@ -29,7 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Couldn't create server: %s", err)
 	}
-	log.Printf("Starting server at %s", srv.Addr)
+	log.Printf("Starting server at https://127.0.0.1%s", srv.Addr)
 	if err := srv.ListenAndServeTLS("", ""); err != nil {
 		log.Fatalf("Server ran into error: %s", err)
 	}

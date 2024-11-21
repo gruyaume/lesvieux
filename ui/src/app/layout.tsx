@@ -5,7 +5,7 @@ import { ReactQueryClientProvider } from './components/ReactQueryClientProvider'
 
 export const metadata: Metadata = {
   title: "LesVieux",
-  description: "A blogging platform",
+  description: "A job platform for seniors",
 };
 
 export default function RootLayout({
