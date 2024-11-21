@@ -1,18 +1,18 @@
 import { Dispatch, SetStateAction, useState, ChangeEvent, createContext } from "react"
-import { useAuth } from "../../auth/authContext"
+import { useAuth } from "../auth/authContext"
 import { useMutation, useQueryClient } from "react-query"
-import { changePassword, changeMyPassword } from "../../../queries"
+import { changeAdminAccountPassword, changeMyAdminAccountPassword } from "../../queries"
 import { passwordIsValid } from "../../utils"
 import { Modal, Button, Input, PasswordToggle, Form } from "@canonical/react-components";
 
-export type ChangePasswordModalData = {
+export type ChangeAdminPasswordModalData = {
     id: string
     email: string
 } | null
 
 interface ChangePasswordModalProps {
-    modalData: ChangePasswordModalData
-    setModalData: Dispatch<SetStateAction<ChangePasswordModalData>>
+    modalData: ChangeAdminPasswordModalData
+    setModalData: Dispatch<SetStateAction<ChangeAdminPasswordModalData>>
 }
 
 export const ChangePasswordModalContext = createContext<ChangePasswordModalProps>({
@@ -23,7 +23,7 @@ export const ChangePasswordModalContext = createContext<ChangePasswordModalProps
 export function ChangeMyPasswordModal({ modalData, setModalData }: ChangePasswordModalProps) {
     const auth = useAuth()
     const queryClient = useQueryClient()
-    const mutation = useMutation(changeMyPassword, {
+    const mutation = useMutation(changeMyAdminAccountPassword, {
         onSuccess: () => {
             queryClient.invalidateQueries('users')
             setErrorText("")
@@ -82,10 +82,10 @@ export function ChangeMyPasswordModal({ modalData, setModalData }: ChangePasswor
     )
 }
 
-export function ChangePasswordModal({ modalData, setModalData }: ChangePasswordModalProps) {
+export function ChangeAdminPasswordModal({ modalData, setModalData }: ChangePasswordModalProps) {
     const auth = useAuth()
     const queryClient = useQueryClient()
-    const mutation = useMutation(changePassword, {
+    const mutation = useMutation(changeAdminAccountPassword, {
         onSuccess: () => {
             queryClient.invalidateQueries('users')
             setErrorText("")

@@ -5,7 +5,8 @@ import { useQuery } from "react-query";
 import { Aside, AsideContext } from "./aside";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./auth/authContext";
-import { ChangePasswordModalData, ChangeMyPasswordModal, ChangePasswordModalContext } from "./components";
+import UploadUserAsidePanel from "./users/asideForm";
+import { ChangeAdminPasswordModalData, ChangeMyPasswordModal, ChangePasswordModalContext } from "./users/components";
 import Logo from "../components/logo"
 import { Button, Panel, SideNavigation, StatusLabel } from "@canonical/react-components";
 import { useCookies } from "react-cookie";
@@ -46,19 +47,32 @@ export function SideBar({ activePath, sidebarVisible }: { activePath: string, si
             >
                 <SideNavigation
                     hasIcons
-                    items={[
-                        {
-                            items: [
-                                {
-                                    href: '/employer_portal/my_posts',
-                                    "aria-current": activePath.startsWith("/employer_portal/my_posts"),
-                                    icon: 'canvas',
-                                    label: 'Job Posts'
-                                },
-                            ]
-                        }
-                    ]}
                 />
+                <div >
+                    <h3 className="p-side-navigation__heading">Admin</h3>
+                    <div className="p-side-navigation--icons">
+                        <nav aria-label="Main">
+                            <ul className="p-side-navigation__list" >
+                                <li className="p-side-navigation__item" >
+                                    <a className="p-side-navigation__link" aria-current={activePath.startsWith("/admin_portal/job_posts")} href="/admin_portal/job_posts" >
+                                        <i className="p-icon--containers p-side-navigation__icon"></i>
+                                        <span className="p-side-navigation__label">
+                                            <span className="p-side-navigation__label">Job posts</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li className="p-side-navigation__item" >
+                                    <a className="p-side-navigation__link" aria-current={activePath.startsWith("/admin_portal/users")} href="/admin_portal/users" >
+                                        <i className="p-icon--user p-side-navigation__icon"></i>
+                                        <span className="p-side-navigation__label">
+                                            <span className="p-side-navigation__label">Users</span>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
 
                 <div className="p-side-navigation--icons" id="drawer-icons">
                     <nav aria-label="Main">
@@ -118,14 +132,14 @@ export default function Navigation({
     children: React.ReactNode;
 }>) {
     const activePath = usePathname()
-    const noNavRoutes = ['/employer_portal/login', '/employer_portal/my_posts/draft'];
+    const noNavRoutes = ['/admin_portal/login', '/admin_portal/initialize'];
 
     const shouldRenderNavigation = !noNavRoutes.includes(activePath);
     const [sidebarVisible, setSidebarVisible] = useState<boolean>(true)
     const [asideOpen, setAsideOpen] = useState<boolean>(false)
     const [asideData, setAsideData] = useState<any>(null)
-    const [changePasswordModalData, setChangePasswordModalData] = useState<ChangePasswordModalData>(null)
-
+    const [changePasswordModalData, setChangePasswordModalData] = useState<ChangeAdminPasswordModalData>(null)
+    let asideForm = UploadUserAsidePanel
     return (
         <div className="l-application" role="presentation">
             <AsideContext.Provider value={{ isOpen: asideOpen, setIsOpen: setAsideOpen, extraData: asideData, setExtraData: setAsideData }}>
@@ -144,6 +158,7 @@ export default function Navigation({
                     {children}
                     {changePasswordModalData != null && <ChangeMyPasswordModal modalData={changePasswordModalData} setModalData={setChangePasswordModalData} />}
                 </main>
+                <Aside FormComponent={asideForm} />
             </AsideContext.Provider>
         </div >
     )

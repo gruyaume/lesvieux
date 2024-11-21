@@ -1,11 +1,11 @@
 "use client"
 
 import { useState, ChangeEvent } from "react"
-import { getStatus, login, postFirstUser } from "../../queries"
+import { getStatus, adminLogin, postFirstAdminUser } from "../../queries"
 import { useMutation, useQuery } from "react-query"
 import { useRouter } from "next/navigation"
-import { passwordIsValid } from "../utils"
-import { useAuth } from "../auth/authContext"
+import { passwordIsValid } from "../../utils"
+import { useAuth } from "../../admin_portal/auth/authContext"
 import Logo from "../../components/logo"
 import { useCookies } from "react-cookie"
 import { statusResponseResult } from "../../types"
@@ -21,9 +21,9 @@ export default function Initialize() {
     })
     if (statusQuery.data && statusQuery.data.initialized) {
         auth.setFirstUserCreated(true)
-        router.push("/employer_portal/login")
+        router.push("/admin_portal/login")
     }
-    const loginMutation = useMutation(login, {
+    const loginMutation = useMutation(adminLogin, {
         onSuccess: (response) => {
             const token = response?.token;
             if (token) {
@@ -33,7 +33,7 @@ export default function Initialize() {
                     secure: true,
                     expires: new Date(new Date().getTime() + 60 * 60 * 1000),
                 })
-                router.push('/employer_portal/my_posts')
+                router.push('/admin_portal/users')
             } else {
                 setErrorText("Failed to retrieve token.")
             }
@@ -42,7 +42,7 @@ export default function Initialize() {
             setErrorText(e.message)
         }
     })
-    const postUserMutation = useMutation(postFirstUser, {
+    const postUserMutation = useMutation(postFirstAdminUser, {
         onSuccess: () => {
             setErrorText("")
             auth.setFirstUserCreated(true)
