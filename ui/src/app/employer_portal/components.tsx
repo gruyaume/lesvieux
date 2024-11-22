@@ -25,7 +25,7 @@ export function ChangeMyPasswordModal({ modalData, setModalData }: ChangePasswor
     const queryClient = useQueryClient()
     const mutation = useMutation(changeMyEmployerAccountPassword, {
         onSuccess: () => {
-            queryClient.invalidateQueries('users')
+            queryClient.invalidateQueries('admin_users')
             setErrorText("")
             setModalData(null)
         },
@@ -87,7 +87,7 @@ export function ChangePasswordModal({ modalData, setModalData }: ChangePasswordM
     const queryClient = useQueryClient()
     const mutation = useMutation(changeEmployerAccountPassword, {
         onSuccess: () => {
-            queryClient.invalidateQueries('users')
+            queryClient.invalidateQueries('admin_users')
             setErrorText("")
             setModalData(null)
         },

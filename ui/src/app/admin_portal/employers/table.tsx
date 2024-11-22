@@ -21,6 +21,7 @@ export function EmployersTable({ employers }: TableProps) {
     const [confirmationModalData, setConfirmationModalData] = useState<ConfirmationModalData | null>(null)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [newEmployerName, setNewEmployerName] = useState("");
+    const [newEmployerName2, setNewEmployerName2] = useState("");
     const queryClient = useQueryClient()
     const deleteMutation = useMutation(deleteEmployer, {
         onSuccess: () => queryClient.invalidateQueries('employers')
@@ -60,9 +61,8 @@ export function EmployersTable({ employers }: TableProps) {
         >
             <div className="u-fixed-width">
                 <MainTable
+                    sortable
                     headers={[{
-                        content: "ID"
-                    }, {
                         content: "Name"
                     }, {
                         content: "Actions",
@@ -70,9 +70,6 @@ export function EmployersTable({ employers }: TableProps) {
                     }]}
                     rows={employers.map(employer => ({
                         columns: [
-                            {
-                                content: employer.id.toString(),
-                            },
                             {
                                 content: employer.name,
                             },
@@ -124,6 +121,9 @@ export function EmployersTable({ employers }: TableProps) {
                     <Form>
                         <Input
                             label="Employer Name"
+                            id="employerName1"
+                            type="text"
+                            required
                             value={newEmployerName}
                             onChange={(e) => setNewEmployerName(e.target.value)}
                             placeholder="Enter employer name"
