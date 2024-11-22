@@ -63,7 +63,6 @@ export default function Initialize() {
     const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => { setEmail(event.target.value) }
     const handlePassword1Change = (event: ChangeEvent<HTMLInputElement>) => { setPassword1(event.target.value) }
     const handlePassword2Change = (event: ChangeEvent<HTMLInputElement>) => { setPassword2(event.target.value) }
-    console.log("Rendering Initialize")
     return (
         <>
             <Navigation

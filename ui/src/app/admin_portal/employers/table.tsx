@@ -21,7 +21,6 @@ export function EmployersTable({ employers }: TableProps) {
     const [confirmationModalData, setConfirmationModalData] = useState<ConfirmationModalData | null>(null)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [newEmployerName, setNewEmployerName] = useState("");
-    const [newEmployerName2, setNewEmployerName2] = useState("");
     const queryClient = useQueryClient()
     const deleteMutation = useMutation(deleteEmployer, {
         onSuccess: () => queryClient.invalidateQueries('employers')
@@ -121,7 +120,7 @@ export function EmployersTable({ employers }: TableProps) {
                     <Form>
                         <Input
                             label="Employer Name"
-                            id="employerName1"
+                            id="employerName"
                             type="text"
                             required
                             value={newEmployerName}

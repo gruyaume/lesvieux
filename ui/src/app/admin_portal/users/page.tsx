@@ -18,7 +18,6 @@ export default function AdminUsers() {
     if (!cookies.user_token) {
         router.push("/admin_portal/login")
     }
-    console.log("AdminUsers re-rendered");
     const adminUsersQuery = useQuery<UserEntry[], Error>({
         queryKey: ['admin_users', cookies.user_token],
         queryFn: () => listAdminAccounts({ authToken: cookies.user_token }),

@@ -53,8 +53,6 @@ export function UsersTable({ adminUsers, employerUsers }: TableProps) {
         ...employerUsers.map((user) => ({ ...user, role: "Employer" })),
     ];
 
-    console.log("isCreateUserModalOpen:", isCreateUserModalOpen);
-
     return (
         <Panel
             stickyHeader

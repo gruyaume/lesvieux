@@ -113,7 +113,6 @@ export function CreateUserModal({ setModalData }: CreateUserModalProps) {
         onSuccess: () => {
             queryClient.invalidateQueries("admin_users");
             setErrorText("");
-            console.log("Closing modal on success");
             setModalData(false);
         },
         onError: (e: Error) => {
@@ -210,7 +209,6 @@ export function ChangeAdminPasswordModal({ modalData, setModalData }: ChangePass
             setErrorText(e.message)
         }
     })
-    console.log("ChangeAdminPasswordModal re-rendered");
     const [password1, setPassword1] = useState<string>("")
     const [password2, setPassword2] = useState<string>("")
     const passwordsMatch = password1 === password2
