@@ -87,7 +87,7 @@ export default function AdminLogin() {
                                     <Input
                                         id="InputEmail"
                                         label="Email"
-                                        type="text"
+                                        type="email"
                                         onChange={handleEmailChange}
                                     />
                                     <PasswordToggle

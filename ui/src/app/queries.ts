@@ -400,6 +400,23 @@ export async function deleteAdminAccount(params: { authToken: string, id: string
     return respData.result
 }
 
+export async function createAdminUser(userForm: { authToken: string, email: string, password: string }) {
+    const response = await fetch("/api/v1/admin/accounts", {
+        method: "POST",
+        body: JSON.stringify({
+            "email": userForm.email, "password": userForm.password
+        }),
+        headers: {
+            'Authorization': "Bearer " + userForm.authToken
+        }
+    })
+    const respData = await response.json()
+    if (!response.ok) {
+        throw new Error(`${response.status}: ${HTTPStatus(response.status)}. ${respData.error}`)
+    }
+    return respData.result
+}
+
 export async function postFirstAdminUser(userForm: { email: string, password: string }) {
     const response = await fetch("/api/v1/admin/accounts", {
         method: "POST",

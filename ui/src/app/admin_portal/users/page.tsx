@@ -1,28 +1,25 @@
 "use client"
 
 import { useQuery } from "react-query"
-import { listAdminAccounts } from "../../queries"
+import { listAdminAccounts, listEmployerAccounts } from "../../queries"
 import { UserEntry } from "../../types"
 import { useCookies } from "react-cookie"
 import { useRouter } from "next/navigation"
-import { AdminUsersTable } from "./table"
+import { UsersTable } from "./table"
 import Loading from "../../components/loading"
 import Error from "../../components/error"
 import { useAuth } from "../auth/authContext"
 
 
-export default function Users() {
+export default function AdminUsers() {
     const auth = useAuth();
     const router = useRouter()
     const [cookies, setCookie, removeCookie] = useCookies(['user_token']);
     if (!cookies.user_token) {
         router.push("/admin_portal/login")
     }
-    if (auth.user && auth.user.role != 1) {
-        router.push("/admin_portal/my_posts")
-    }
-    const query = useQuery<UserEntry[], Error>({
-        queryKey: ['users', cookies.user_token],
+    const adminUsersQuery = useQuery<UserEntry[], Error>({
+        queryKey: ['admin_users', cookies.user_token],
         queryFn: () => listAdminAccounts({ authToken: cookies.user_token }),
         retry: (failureCount, error): boolean => {
             if (error.message.includes("401")) {
@@ -31,13 +28,24 @@ export default function Users() {
             return true
         },
     })
-    if (query.status == "loading") { return <Loading /> }
-    if (query.status == "error") {
-        if (query.error.message.includes("401")) {
+    const employerUsersQuery = useQuery<UserEntry[], Error>({
+        queryKey: ['employer_users', cookies.user_token],
+        queryFn: () => listEmployerAccounts({ authToken: cookies.user_token }),
+        retry: (failureCount, error): boolean => {
+            if (error.message.includes("401")) {
+                return false
+            }
+            return true
+        },
+    })
+    if (adminUsersQuery.status == "loading") { return <Loading /> }
+    if (adminUsersQuery.status == "error") {
+        if (adminUsersQuery.error.message.includes("401")) {
             removeCookie("user_token")
         }
-        return <Error msg={query.error.message} />
+        return <Error msg={adminUsersQuery.error.message} />
     }
-    const users = Array.from(query.data ? query.data : [])
-    return <AdminUsersTable users={users} />
+    const adminUsers = Array.from(adminUsersQuery.data ? adminUsersQuery.data : [])
+    const employerUsers = Array.from(employerUsersQuery.data ? employerUsersQuery.data : [])
+    return <UsersTable adminUsers={adminUsers} employerUsers={employerUsers} />
 }

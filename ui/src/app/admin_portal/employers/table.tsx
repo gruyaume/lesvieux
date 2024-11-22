@@ -60,9 +60,8 @@ export function EmployersTable({ employers }: TableProps) {
         >
             <div className="u-fixed-width">
                 <MainTable
+                    sortable
                     headers={[{
-                        content: "ID"
-                    }, {
                         content: "Name"
                     }, {
                         content: "Actions",
@@ -70,9 +69,6 @@ export function EmployersTable({ employers }: TableProps) {
                     }]}
                     rows={employers.map(employer => ({
                         columns: [
-                            {
-                                content: employer.id.toString(),
-                            },
                             {
                                 content: employer.name,
                             },
@@ -124,6 +120,9 @@ export function EmployersTable({ employers }: TableProps) {
                     <Form>
                         <Input
                             label="Employer Name"
+                            id="employerName"
+                            type="text"
+                            required
                             value={newEmployerName}
                             onChange={(e) => setNewEmployerName(e.target.value)}
                             placeholder="Enter employer name"

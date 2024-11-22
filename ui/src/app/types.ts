@@ -19,7 +19,6 @@ export type User = {
 export type UserEntry = {
     id: number
     email: string
-    role: number
 }
 
 export type EmployerEntry = {

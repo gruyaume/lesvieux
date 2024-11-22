@@ -14,7 +14,6 @@ function JobEmptyState({ }: {}) {
     const queryClient = useQueryClient()
     const createJobPostMutation = useMutation(createJobPost, {
         onSuccess: (data) => {
-            console.log("data", data);
             const newPostId = data.id;
             queryClient.invalidateQueries('jobposts');
             router.push(`/employer_portal/my_posts/draft?id=${newPostId}`);
@@ -71,7 +70,6 @@ export function JobPostsTable({ jobPosts: rows }: TableProps) {
 
     const createJobPostMutation = useMutation(createJobPost, {
         onSuccess: (data) => {
-            console.log("data", data);
             const newPostId = data.id;
             queryClient.invalidateQueries('jobposts');
             router.push(`/employer_portal/my_posts/draft?id=${newPostId}`);
