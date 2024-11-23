@@ -139,7 +139,7 @@ export function CreateUserModal({ setModalData }: CreateUserModalProps) {
 
     return (
         <Modal
-            title={"Create User"}
+            title={"Create Admin User"}
             buttonRow={
                 <>
                     <Button onClick={() => setModalData(false)}>Cancel</Button>
@@ -164,18 +164,6 @@ export function CreateUserModal({ setModalData }: CreateUserModalProps) {
                     required
                     {...formik.getFieldProps("email")}
                     error={formik.touched.email ? formik.errors.email : null}
-                />
-                <Select
-                    id="role"
-                    label="Role"
-                    options={[
-                        { label: "Applicant", value: "0" },
-                        { label: "Admin", value: "1" },
-                        { label: "Employer", value: "2" },
-                    ]}
-                    required
-                    {...formik.getFieldProps("role")}
-                    error={formik.touched.role ? formik.errors.role : null}
                 />
                 <PasswordToggle
                     id="password1"

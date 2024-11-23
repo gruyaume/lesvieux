@@ -19,10 +19,9 @@ export type ConfirmationModalData = {
 
 type TableProps = {
     adminUsers: UserEntry[];
-    employerUsers: UserEntry[];
 };
 
-export function UsersTable({ adminUsers, employerUsers }: TableProps) {
+export function UsersTable({ adminUsers }: TableProps) {
     const auth = useAuth();
     const queryClient = useQueryClient();
 
@@ -48,18 +47,17 @@ export function UsersTable({ adminUsers, employerUsers }: TableProps) {
         setChangePasswordModalData({ id, email });
     };
 
-    const usersWithRoles = [
-        ...adminUsers.map((user) => ({ ...user, role: "Admin" })),
-        ...employerUsers.map((user) => ({ ...user, role: "Employer" })),
-    ];
+    const users = adminUsers.map((user) => ({
+        ...user,
+    }));
 
     return (
         <Panel
             stickyHeader
-            title="Users"
+            title="Admin Users"
             controls={
                 <Button appearance="positive" onClick={() => setIsCreateUserModalOpen(true)}>
-                    Create User
+                    Create Admin User
                 </Button>
             }
         >
@@ -67,13 +65,11 @@ export function UsersTable({ adminUsers, employerUsers }: TableProps) {
                 <MainTable
                     headers={[
                         { content: "Email" },
-                        { content: "Role" },
                         { content: "Actions", className: "u-align--right has-overflow" },
                     ]}
-                    rows={usersWithRoles.map((user) => ({
+                    rows={users.map((user) => ({
                         columns: [
                             { content: user.email },
-                            { content: user.role },
                             {
                                 content: (
                                     <ContextualMenu

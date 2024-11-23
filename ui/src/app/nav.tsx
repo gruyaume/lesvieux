@@ -11,7 +11,30 @@ export default function ReaderNavigation({
     return (
         <Application>
             <AppMain>
-                <Navigation items={[]} logo={<Logo />} />
+                <Navigation
+                    items={[
+                    ]}
+                    itemsRight={[
+                        {
+                            alignRight: true,
+                            items: [
+                                {
+                                    label: 'Applicant',
+                                    url: '#'
+                                },
+                                {
+                                    label: 'Employer',
+                                    url: '/employer_portal/login'
+                                },
+                                {
+                                    label: 'Admin',
+                                    url: '/admin_portal/login'
+                                }
+                            ],
+                            label: 'Portal'
+                        }
+                    ]}
+                    logo={<Logo />} />
                 <div style={{
                     display: "flex",
                     alignItems: "center",

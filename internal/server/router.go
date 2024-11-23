@@ -13,12 +13,12 @@ func NewLesVieuxRouter(config *HandlerConfig) http.Handler {
 	apiV1Router.HandleFunc("POST /employers/login", EmployersLogin(config))
 	apiV1Router.HandleFunc("POST /admin/login", AdminLogin(config))
 	apiV1Router.HandleFunc("GET /status", GetStatus(config))
+	apiV1Router.HandleFunc("GET /posts", ListJobPosts(config))
 
 	// Admin or First User
 	apiV1Router.HandleFunc("POST /admin/accounts", adminOrFirstUser(config.JWTSecret, config.DBQueries, CreateAdminAccount(config)))
 
 	// Admin Only
-	apiV1Router.HandleFunc("GET /posts", adminOnly(config.JWTSecret, ListJobPosts(config)))
 	apiV1Router.HandleFunc("GET /posts/{post_id}", adminOnly(config.JWTSecret, GetJobPost(config)))
 	apiV1Router.HandleFunc("POST /employers", adminOnly(config.JWTSecret, CreateEmployer(config)))
 	apiV1Router.HandleFunc("GET /employers", adminOnly(config.JWTSecret, ListEmployers(config)))

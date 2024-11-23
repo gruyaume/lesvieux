@@ -56,17 +56,34 @@ export default function AdminLogin() {
     return (
         <>
             <Navigation
-                items={[]}
+                items={[
+                ]}
+                itemsRight={[
+                    {
+                        alignRight: true,
+                        items: [
+                            {
+                                label: 'Applicant',
+                                url: '#'
+                            },
+                            {
+                                label: 'Employer',
+                                url: '/employer_portal/login'
+                            },
+                            {
+                                label: 'Admin',
+                                url: '/admin_portal/login'
+                            }
+                        ],
+                        label: 'Portal'
+                    }
+                ]}
                 logo={
-                    <div >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Logo />
-                        <StatusLabel
-                            appearance="information">
-                            Admin
-                        </StatusLabel>
+                        <StatusLabel appearance="information">Admin</StatusLabel>
                     </div>
-                }
-            />
+                } />
             <div style={{
                 display: "flex",
                 alignContent: "center",

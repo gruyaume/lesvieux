@@ -5,7 +5,7 @@ import ReaderNavigation from "./nav";
 import { formatDate } from "./utils";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./employer_portal/auth/authContext";
-import { getStatus, ListPublicJobPosts } from "./queries";
+import { getStatus, ListJobPosts } from "./queries";
 import { statusResponseResult } from "./types";
 import { remark } from 'remark';
 import html from 'remark-html';
@@ -28,7 +28,7 @@ export default function FrontPage() {
     });
     const { data: jobPosts, isLoading, isError, error } = useQuery<JobPost[], Error>({
         queryKey: "jobPosts",
-        queryFn: ListPublicJobPosts,
+        queryFn: ListJobPosts,
     });
 
     const [processedPosts, setProcessedPosts] = useState<JobPost[]>([]);
