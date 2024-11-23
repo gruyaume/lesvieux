@@ -22,7 +22,7 @@ export default function JobPosts() {
         queryKey: ['jobposts', cookies.user_token],
         queryFn: () => listJobPosts({ authToken: cookies.user_token }),
     })
-    if (query.status == "loading") { return <Loading /> }
+    // if (query.status == "loading") { return <Loading /> }
     if (query.status == "error") {
         return <Error msg={query.error.message} />
     }

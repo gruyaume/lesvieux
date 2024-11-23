@@ -147,6 +147,12 @@ func CreateEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 			return
 		}
 
+		_, err := env.DBQueries.GetEmployerAccountByEmail(context.Background(), account.Email)
+		if err == nil {
+			writeError(w, http.StatusConflict, "Account already exists")
+			return
+		}
+
 		passwordHash, err := GeneratePasswordHash(account.Password)
 		if err != nil {
 			log.Println("Failed to generate password hash: " + err.Error())
