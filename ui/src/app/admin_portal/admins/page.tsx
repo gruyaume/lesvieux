@@ -29,7 +29,7 @@ export default function AdminUsers() {
         },
     })
 
-    if (adminUsersQuery.status == "loading") { return <Loading /> }
+    // if (adminUsersQuery.status == "loading") { return <Loading /> }
     if (adminUsersQuery.status == "error") {
         if (adminUsersQuery.error.message.includes("401")) {
             removeCookie("user_token")

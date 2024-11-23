@@ -56,11 +56,11 @@ export default function FrontPage() {
     return (
         <ReaderNavigation>
             <section className="p-section">
-                {isLoading && <div>Loading...</div>}
+                {/* {isLoading && <div>Loading...</div>} */}
 
-                {isError && <div>Error: {error?.message}</div>}
+                {/* {isError && <div>Error: {error?.message}</div>} */}
 
-                {!isLoading && !isError && processedPosts?.map((post) => (
+                {processedPosts?.map((post) => (
                     <div key={post.id} className="p-section--shallow">
                         <h2>{post.title}</h2>
                         <h5>By: {post.author}</h5>

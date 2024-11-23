@@ -29,7 +29,7 @@ export default function Employers() {
             return true
         },
     })
-    if (query.status == "loading") { return <Loading /> }
+    // if (query.status == "loading") { return <Loading /> }
     if (query.status == "error") {
         if (query.error.message.includes("401")) {
             removeCookie("user_token")
