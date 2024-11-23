@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery } from "react-query"
-import { listAdminAccounts, listEmployerAccounts } from "../../queries"
+import { listAdminAccounts } from "../../queries"
 import { UserEntry } from "../../types"
 import { useCookies } from "react-cookie"
 import { useRouter } from "next/navigation"
@@ -28,16 +28,7 @@ export default function AdminUsers() {
             return true
         },
     })
-    const employerUsersQuery = useQuery<UserEntry[], Error>({
-        queryKey: ['employer_users', cookies.user_token],
-        queryFn: () => listEmployerAccounts({ authToken: cookies.user_token }),
-        retry: (failureCount, error): boolean => {
-            if (error.message.includes("401")) {
-                return false
-            }
-            return true
-        },
-    })
+
     if (adminUsersQuery.status == "loading") { return <Loading /> }
     if (adminUsersQuery.status == "error") {
         if (adminUsersQuery.error.message.includes("401")) {
@@ -46,6 +37,5 @@ export default function AdminUsers() {
         return <Error msg={adminUsersQuery.error.message} />
     }
     const adminUsers = Array.from(adminUsersQuery.data ? adminUsersQuery.data : [])
-    const employerUsers = Array.from(employerUsersQuery.data ? employerUsersQuery.data : [])
-    return <UsersTable adminUsers={adminUsers} employerUsers={employerUsers} />
+    return <UsersTable adminUsers={adminUsers} />
 }

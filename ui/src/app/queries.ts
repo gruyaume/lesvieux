@@ -16,9 +16,9 @@ export async function getStatus() {
 }
 
 
-export async function ListPublicJobPosts(): Promise<JobPost[]> {
+export async function ListJobPosts(): Promise<JobPost[]> {
     // Step 1: Fetch the list of job post IDs
-    const response = await fetch("/api/v1/published_posts", {
+    const response = await fetch("/api/v1/posts", {
         method: 'GET',
     });
     if (!response.ok) {
@@ -34,7 +34,7 @@ export async function ListPublicJobPosts(): Promise<JobPost[]> {
 
     // Step 2: Fetch details for each job post
     const promises = ids.map(async (id: number) => {
-        const postResponse = await fetch(`/api/v1/published_posts/${id}`, {
+        const postResponse = await fetch(`/api/v1/posts/${id}`, {
             method: 'GET',
         });
         if (!postResponse.ok) {

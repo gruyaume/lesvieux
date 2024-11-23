@@ -4,7 +4,7 @@ import { SetStateAction, Dispatch, useState, useContext } from "react"
 import { useQuery } from "react-query";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./auth/authContext";
-import { ChangeAdminPasswordModalData, ChangeMyPasswordModal, ChangePasswordModalContext } from "./users/components";
+import { ChangeAdminPasswordModalData, ChangeMyPasswordModal, ChangePasswordModalContext } from "./admins/components";
 import Logo from "../components/logo"
 import { Button, Panel, SideNavigation, StatusLabel } from "@canonical/react-components";
 import { useCookies } from "react-cookie";
@@ -75,10 +75,10 @@ export function SideBar({ activePath, sidebarVisible }: { activePath: string, si
                                     </a>
                                 </li>
                                 <li className="p-side-navigation__item" >
-                                    <a className="p-side-navigation__link" aria-current={activePath.startsWith("/admin_portal/users")} href="/admin_portal/users" >
+                                    <a className="p-side-navigation__link" aria-current={activePath.startsWith("/admin_portal/admins")} href="/admin_portal/admins" >
                                         <i className="p-icon--user p-side-navigation__icon"></i>
                                         <span className="p-side-navigation__label">
-                                            <span className="p-side-navigation__label">Users</span>
+                                            <span className="p-side-navigation__label">Admins</span>
                                         </span>
                                     </a>
                                 </li>
