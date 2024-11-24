@@ -314,8 +314,8 @@ export async function changeMyAdminAccountPassword(changeAdminAccountPasswordFor
     return respData.result
 }
 
-export async function changeEmployerAccountPassword(changeEmployerAccountPasswordForm: { authToken: string, id: string, password: string }) {
-    const response = await fetch("/api/v1/employers/accounts/" + changeEmployerAccountPasswordForm.id + "/change_password", {
+export async function changeEmployerAccountPassword(changeEmployerAccountPasswordForm: { authToken: string, employerId: string, accountId: string, password: string }) {
+    const response = await fetch("/api/v1/employers/" + changeEmployerAccountPasswordForm.employerId + "/accounts/" + changeEmployerAccountPasswordForm.accountId + "/change_password", {
         method: "POST",
         headers: {
             'Authorization': 'Bearer ' + changeEmployerAccountPasswordForm.authToken,
@@ -346,12 +346,32 @@ export async function changeAdminAccountPassword(changeAdminAccountPasswordForm:
     return respData.result
 }
 
-export async function listEmployerAccounts(params: { authToken: string }): Promise<UserEntry[]> {
-    const response = await fetch("/api/v1/employers/accounts", {
+export async function listEmployerAccounts(params: { authToken: string, employerId: string }): Promise<UserEntry[]> {
+    if (!params.authToken) {
+        throw new Error("No token provided")
+    }
+    if (!params.employerId) {
+        throw new Error("No employerId provided")
+    }
+    const response = await fetch("/api/v1/employers/" + params.employerId + "/accounts", {
         headers: { "Authorization": "Bearer " + params.authToken }
     })
-    // The response should look like:
-    // {"result":[{"id":1,"email":"gruyaume","role":1}]}
+    const respData = await response.json()
+    if (!response.ok) {
+        throw new Error(`${response.status}: ${HTTPStatus(response.status)}. ${respData.error}`)
+    }
+    return respData.result
+}
+
+export async function numEmployerAccounts(params: { authToken: string, employerId: string }): Promise<number> {
+    const employerAccounts = await listEmployerAccounts({ authToken: params.authToken, employerId: params.employerId })
+    return employerAccounts.length
+}
+
+export async function getEmployer(params: { authToken: string, id: string }): Promise<EmployerEntry> {
+    const response = await fetch("/api/v1/employers/" + params.id, {
+        headers: { "Authorization": "Bearer " + params.authToken }
+    })
     const respData = await response.json()
     if (!response.ok) {
         throw new Error(`${response.status}: ${HTTPStatus(response.status)}. ${respData.error}`)
@@ -372,8 +392,8 @@ export async function listAdminAccounts(params: { authToken: string }): Promise<
     return respData.result
 }
 
-export async function deleteEmployerAccount(params: { authToken: string, id: string }) {
-    const response = await fetch("/api/v1/employers/accounts/" + params.id, {
+export async function deleteEmployerAccount(params: { authToken: string, employerId: string, accountId: string }) {
+    const response = await fetch("/api/v1/employers/" + params.employerId + "/accounts/" + params.accountId, {
         method: 'DELETE',
         headers: {
             'Authorization': "Bearer " + params.authToken
@@ -402,6 +422,23 @@ export async function deleteAdminAccount(params: { authToken: string, id: string
 
 export async function createAdminUser(userForm: { authToken: string, email: string, password: string }) {
     const response = await fetch("/api/v1/admin/accounts", {
+        method: "POST",
+        body: JSON.stringify({
+            "email": userForm.email, "password": userForm.password
+        }),
+        headers: {
+            'Authorization': "Bearer " + userForm.authToken
+        }
+    })
+    const respData = await response.json()
+    if (!response.ok) {
+        throw new Error(`${response.status}: ${HTTPStatus(response.status)}. ${respData.error}`)
+    }
+    return respData.result
+}
+
+export async function createEmployerUser(userForm: { authToken: string, employerId: string, email: string, password: string }) {
+    const response = await fetch("/api/v1/employers/" + userForm.employerId + "/accounts", {
         method: "POST",
         body: JSON.stringify({
             "email": userForm.email, "password": userForm.password
