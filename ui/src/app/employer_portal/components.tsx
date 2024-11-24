@@ -114,7 +114,7 @@ export function ChangePasswordModal({ modalData, setModalData }: ChangePasswordM
                 <Button
                     appearance="positive"
                     disabled={!passwordsMatch || !passwordIsValid(password1)}
-                    onClick={(event) => { event.preventDefault(); mutation.mutate({ authToken: (auth.user ? auth.user.authToken : ""), id: modalData ? modalData.id : "", password: password1 }) }}>
+                    onClick={(event) => { event.preventDefault(); mutation.mutate({ authToken: (auth.user ? auth.user.authToken : ""), employerId: modalData ? modalData.id : "", accountId: "1", password: password1 }) }}>
                     Submit
                 </Button>
             </>}>

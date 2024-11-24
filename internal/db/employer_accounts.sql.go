@@ -38,21 +38,31 @@ func (q *Queries) CreateEmployerAccount(ctx context.Context, arg CreateEmployerA
 
 const deleteEmployerAccount = `-- name: DeleteEmployerAccount :exec
 DELETE FROM employer_accounts
-WHERE id = ?
+where employer_id = ? and id = ?
 `
 
-func (q *Queries) DeleteEmployerAccount(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteEmployerAccount, id)
+type DeleteEmployerAccountParams struct {
+	EmployerID int64
+	ID         int64
+}
+
+func (q *Queries) DeleteEmployerAccount(ctx context.Context, arg DeleteEmployerAccountParams) error {
+	_, err := q.db.ExecContext(ctx, deleteEmployerAccount, arg.EmployerID, arg.ID)
 	return err
 }
 
 const getEmployerAccount = `-- name: GetEmployerAccount :one
 SELECT id, email, password_hash, employer_id FROM employer_accounts
-WHERE id = ? LIMIT 1
+where employer_id = ? and id = ? LIMIT 1
 `
 
-func (q *Queries) GetEmployerAccount(ctx context.Context, id int64) (EmployerAccount, error) {
-	row := q.db.QueryRowContext(ctx, getEmployerAccount, id)
+type GetEmployerAccountParams struct {
+	EmployerID int64
+	ID         int64
+}
+
+func (q *Queries) GetEmployerAccount(ctx context.Context, arg GetEmployerAccountParams) (EmployerAccount, error) {
+	row := q.db.QueryRowContext(ctx, getEmployerAccount, arg.EmployerID, arg.ID)
 	var i EmployerAccount
 	err := row.Scan(
 		&i.ID,
@@ -82,11 +92,12 @@ func (q *Queries) GetEmployerAccountByEmail(ctx context.Context, email string) (
 
 const listEmployerAccounts = `-- name: ListEmployerAccounts :many
 SELECT id, email, password_hash, employer_id FROM employer_accounts
+where employer_id = ?
 ORDER BY email
 `
 
-func (q *Queries) ListEmployerAccounts(ctx context.Context) ([]EmployerAccount, error) {
-	rows, err := q.db.QueryContext(ctx, listEmployerAccounts)
+func (q *Queries) ListEmployerAccounts(ctx context.Context, employerID int64) ([]EmployerAccount, error) {
+	rows, err := q.db.QueryContext(ctx, listEmployerAccounts, employerID)
 	if err != nil {
 		return nil, err
 	}

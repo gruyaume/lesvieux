@@ -12,7 +12,6 @@ import (
 )
 
 type CreateEmployerAccountParams struct {
-	ID       int64  `json:"id"`
 	Email    string `json:"email"`
 	Role     int64  `json:"role"`
 	Password string `json:"password"`
@@ -38,7 +37,13 @@ type ChangeEmployerAccountPasswordResponse struct {
 
 func ListEmployerAccounts(env *HandlerConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		accounts, err := env.DBQueries.ListEmployerAccounts(context.Background())
+		employerId := r.PathValue("employer_id")
+		employerIdInt, err := strconv.ParseInt(employerId, 10, 64)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "Invalid id")
+			return
+		}
+		accounts, err := env.DBQueries.ListEmployerAccounts(context.Background(), employerIdInt)
 		if err != nil {
 			log.Println(err.Error())
 			writeError(w, http.StatusInternalServerError, "internal error")
@@ -63,14 +68,24 @@ func ListEmployerAccounts(env *HandlerConfig) http.HandlerFunc {
 // returns the corresponding EmployerAccount
 func GetEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("user_id")
-		idInt, err := strconv.ParseInt(id, 10, 64)
+		employerID := r.PathValue("employer_id")
+		employerIdInt, err := strconv.ParseInt(employerID, 10, 64)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "Invalid employer id")
+			return
+		}
+		userId := r.PathValue("account_id")
+		idInt, err := strconv.ParseInt(userId, 10, 64)
 		if err != nil {
 			writeError(w, http.StatusBadRequest, "Invalid id")
 			return
 		}
+		getEmployerAccountParams := db.GetEmployerAccountParams{
+			EmployerID: employerIdInt,
+			ID:         idInt,
+		}
 		var DBEmployerAccount db.EmployerAccount
-		DBEmployerAccount, err = env.DBQueries.GetEmployerAccount(context.Background(), idInt)
+		DBEmployerAccount, err = env.DBQueries.GetEmployerAccount(context.Background(), getEmployerAccountParams)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				writeError(w, http.StatusNotFound, "EmployerAccount not found")
@@ -125,6 +140,12 @@ func GetMyEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 // CreateEmployerAccount creates a new EmployerAccount, and returns the id of the created row
 func CreateEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		employerId := r.PathValue("employer_id")
+		employerIdInt, err := strconv.ParseInt(employerId, 10, 64)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "Invalid id")
+			return
+		}
 		var account CreateEmployerAccountParams
 		if err := json.NewDecoder(r.Body).Decode(&account); err != nil {
 			writeError(w, http.StatusBadRequest, "Invalid JSON format")
@@ -147,7 +168,7 @@ func CreateEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 			return
 		}
 
-		_, err := env.DBQueries.GetEmployerAccountByEmail(context.Background(), account.Email)
+		_, err = env.DBQueries.GetEmployerAccountByEmail(context.Background(), account.Email)
 		if err == nil {
 			writeError(w, http.StatusConflict, "Account already exists")
 			return
@@ -162,6 +183,7 @@ func CreateEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 		newEmployerAccountParams := db.CreateEmployerAccountParams{
 			Email:        account.Email,
 			PasswordHash: passwordHash,
+			EmployerID:   employerIdInt,
 		}
 		newEmployerAccount, err := env.DBQueries.CreateEmployerAccount(context.Background(), newEmployerAccountParams)
 		if err != nil {
@@ -183,13 +205,23 @@ func CreateEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 // deletes the corresponding EmployerAccount, and returns a http.StatusNoContent on success
 func DeleteEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("user_id")
-		idInt, err := strconv.ParseInt(id, 10, 64)
+		employerId := r.PathValue("employer_id")
+		employerIdInt, err := strconv.ParseInt(employerId, 10, 64)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, "Invalid id")
+			writeError(w, http.StatusBadRequest, "Invalid employer id")
 			return
 		}
-		_, err = env.DBQueries.GetEmployerAccount(context.Background(), idInt)
+		userId := r.PathValue("account_id")
+		userIdInt, err := strconv.ParseInt(userId, 10, 64)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "Invalid user id")
+			return
+		}
+		getAccountParams := db.GetEmployerAccountParams{
+			EmployerID: employerIdInt,
+			ID:         userIdInt,
+		}
+		_, err = env.DBQueries.GetEmployerAccount(context.Background(), getAccountParams)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				writeError(w, http.StatusNotFound, "EmployerAccount not found")
@@ -199,15 +231,18 @@ func DeleteEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 			writeError(w, http.StatusInternalServerError, "internal error")
 			return
 		}
-
-		err = env.DBQueries.DeleteEmployerAccount(context.Background(), idInt)
+		deleteAccountParams := db.DeleteEmployerAccountParams{
+			EmployerID: employerIdInt,
+			ID:         userIdInt,
+		}
+		err = env.DBQueries.DeleteEmployerAccount(context.Background(), deleteAccountParams)
 		if err != nil {
 			log.Println(err.Error())
 			writeError(w, http.StatusInternalServerError, "internal error")
 			return
 		}
 		w.WriteHeader(http.StatusAccepted)
-		response := map[string]any{"id": idInt}
+		response := map[string]any{"id": userIdInt}
 		err = writeJSON(w, response)
 		if err != nil {
 			writeError(w, http.StatusInternalServerError, "internal error")
@@ -218,19 +253,28 @@ func DeleteEmployerAccount(env *HandlerConfig) http.HandlerFunc {
 
 func ChangeEmployerAccountPassword(env *HandlerConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := r.PathValue("user_id")
+		employerId := r.PathValue("employer_id")
+		employerIdInt, err := strconv.ParseInt(employerId, 10, 64)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "Invalid employer id")
+			return
+		}
+		userId := r.PathValue("account_id")
+		UserIdInt64, err := strconv.ParseInt(userId, 10, 64)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "Invalid id")
+			return
+		}
 		var changeEmployerAccountPassword ChangeEmployerAccountPasswordParams
 		if err := json.NewDecoder(r.Body).Decode(&changeEmployerAccountPassword); err != nil {
 			writeError(w, http.StatusBadRequest, "Invalid JSON format")
 			return
 		}
-		pathIDInt64, err := strconv.ParseInt(id, 10, 64)
-		if err != nil {
-			writeError(w, http.StatusBadRequest, "Invalid id")
-			return
+		getEmployerAccountParams := db.GetEmployerAccountParams{
+			EmployerID: employerIdInt,
+			ID:         UserIdInt64,
 		}
-
-		_, err = env.DBQueries.GetEmployerAccount(context.Background(), pathIDInt64)
+		_, err = env.DBQueries.GetEmployerAccount(context.Background(), getEmployerAccountParams)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				writeError(w, http.StatusNotFound, "EmployerAccount not found")
@@ -252,11 +296,6 @@ func ChangeEmployerAccountPassword(env *HandlerConfig) http.HandlerFunc {
 			)
 			return
 		}
-		idInt, err := strconv.ParseInt(id, 10, 64)
-		if err != nil {
-			writeError(w, http.StatusBadRequest, "Invalid id")
-			return
-		}
 		passwordHash, err := GeneratePasswordHash(changeEmployerAccountPassword.Password)
 		if err != nil {
 			log.Println("Failed to generate password hash: " + err.Error())
@@ -264,7 +303,7 @@ func ChangeEmployerAccountPassword(env *HandlerConfig) http.HandlerFunc {
 			return
 		}
 		updateEmployerAccountParams := db.UpdateEmployerAccountParams{
-			ID:           idInt,
+			ID:           UserIdInt64,
 			PasswordHash: passwordHash,
 		}
 		err = env.DBQueries.UpdateEmployerAccount(context.Background(), updateEmployerAccountParams)
@@ -275,7 +314,7 @@ func ChangeEmployerAccountPassword(env *HandlerConfig) http.HandlerFunc {
 		}
 		w.WriteHeader(http.StatusOK)
 		changeEmployerAccountPasswordResponse := ChangeEmployerAccountPasswordResponse{
-			ID: idInt,
+			ID: UserIdInt64,
 		}
 		err = writeJSON(w, changeEmployerAccountPasswordResponse)
 		if err != nil {
