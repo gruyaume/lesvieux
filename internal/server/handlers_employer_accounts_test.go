@@ -55,12 +55,12 @@ type DeleteEmployerAccountResponse struct {
 	Result DeleteEmployerAccountResponseResult `json:"result"`
 }
 
-func createEmployerAccount(url string, client *http.Client, adminToken string, data *CreateEmployerAccountParams) (int, *CreateEmployerAccountResponse, error) {
+func createEmployerAccount(url string, client *http.Client, adminToken string, employerID string, data *CreateEmployerAccountParams) (int, *CreateEmployerAccountResponse, error) {
 	body, err := json.Marshal(data)
 	if err != nil {
 		return 0, nil, err
 	}
-	req, err := http.NewRequest("POST", url+"/api/v1/employers/accounts", strings.NewReader(string(body)))
+	req, err := http.NewRequest("POST", url+"/api/v1/employers/"+employerID+"/accounts", strings.NewReader(string(body)))
 	if err != nil {
 		return 0, nil, err
 	}
@@ -206,7 +206,7 @@ func TestUsersHandlersCreateEmployerAccount(t *testing.T) {
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			statusCode, resp, err := createEmployerAccount(ts.URL, client, tC.auth, &tC.data)
+			statusCode, resp, err := createEmployerAccount(ts.URL, client, tC.auth, "1", &tC.data)
 			if err != nil {
 				t.Fatalf("couldn't create account: %s", err)
 			}
@@ -303,7 +303,7 @@ func TestHandlersGetMyEmployerAccount(t *testing.T) {
 			auth: employerToken,
 			expectedResponse: GetEmployerAccountResponse{
 				Result: GetEmployerAccountResponseResult{
-					Id: 1, Email: "testemployer",
+					Id: 1, Email: "employee@testemployer.com",
 				},
 			},
 			status: http.StatusOK,

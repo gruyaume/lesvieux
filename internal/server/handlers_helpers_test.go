@@ -2,6 +2,7 @@
 package server_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,8 +16,12 @@ var adminUser = CreateAdminAccountParams{
 	Password: "Admin123",
 }
 
+var validEmployer = CreateEmployerParams{
+	Name: "testemployer",
+}
+
 var validEmployerAccount = CreateEmployerAccountParams{
-	Email:    "testemployer",
+	Email:    "employee@testemployer.com",
 	Password: "Employerpass123!",
 }
 
@@ -61,7 +66,15 @@ func prepareAdminAccount(url string, client *http.Client, token *string) func(*t
 
 func prepareEmployerAccount(url string, client *http.Client, adminToken *string, employerToken *string) func(*testing.T) {
 	return func(t *testing.T) {
-		statusCode, _, err := createEmployerAccount(url, client, *adminToken, &validEmployerAccount)
+		statusCode, createEmplyoerResponse, err := createEmployer(url, client, *adminToken, &validEmployer)
+		if err != nil {
+			t.Fatalf("couldn't create employer account: %s", err)
+		}
+		if statusCode != http.StatusCreated {
+			t.Fatalf("creating the first request should succeed when unauthorized. status code received: %d", statusCode)
+		}
+		idStr := fmt.Sprintf("%d", createEmplyoerResponse.Result.Id)
+		statusCode, _, err = createEmployerAccount(url, client, *adminToken, idStr, &validEmployerAccount)
 		if err != nil {
 			t.Fatalf("couldn't create employer account: %s", err)
 		}

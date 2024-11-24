@@ -56,12 +56,26 @@ func TestEmployerLoginEndToEnd(t *testing.T) {
 	var token string
 	t.Run("prepare user accounts and tokens", prepareAdminAccount(ts.URL, client, &token))
 
+	t.Run("Create employer", func(t *testing.T) {
+		employer := &CreateEmployerParams{
+			Name: "Test Employer",
+		}
+		statusCode, _, err := createEmployer(ts.URL, client, token, employer)
+		if err != nil {
+			t.Fatalf("couldn't create employer: %s", err)
+		}
+		if statusCode != http.StatusCreated {
+			t.Fatalf("expected status %d, got %d", http.StatusCreated, statusCode)
+		}
+	})
+
 	t.Run("Create employer user", func(t *testing.T) {
 		employerUser := &CreateEmployerAccountParams{
 			Email:    "testemployer",
 			Password: "Employer123!",
 		}
-		statusCode, _, err := createEmployerAccount(ts.URL, client, token, employerUser)
+		employerId := "1"
+		statusCode, _, err := createEmployerAccount(ts.URL, client, token, employerId, employerUser)
 		if err != nil {
 			t.Fatalf("couldn't create employer user: %s", err)
 		}
